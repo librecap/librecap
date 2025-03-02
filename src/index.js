@@ -13,7 +13,7 @@ class Librecap {
 
 	init() {
 		const libreCaptchaWidgetElements = document.querySelectorAll(
-			'.librecap, .librecaptcha, .libre-captcha',
+			'.librecap, .librecaptcha, .libre-captcha'
 		)
 
 		libreCaptchaWidgetElements.forEach((widget) => {

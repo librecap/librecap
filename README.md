@@ -41,6 +41,7 @@ Add a CAPTCHA box to your website by inserting this div wherever you need verifi
 That's it! The default configuration works out of the box using your self hosted "gateway" server.
 
 ## 📋 Table of Contents
+
 - [Quick Start](#quick-start)
 - [Overview](#overview)
 - [Features](#features)
@@ -52,9 +53,11 @@ That's it! The default configuration works out of the box using your self hosted
 - [License](#license)
 
 ## 🌟 Overview
+
 LibreCap offers a privacy-friendly CAPTCHA solution that respects your users' data. Unlike other CAPTCHA services, LibreCap operates without tracking, cookies, or analytics, making it an excellent choice for websites that prioritize user privacy.
 
 ## ✨ Features
+
 - **Privacy-First Design**: No tracking, no cookies, no analytics, no third-party services
 - **Adaptive Theming**: Dark, light, and automatic theme support to match your website
 - **Internationalization**: Translations for 107 languages with automatic language detection
@@ -65,18 +68,21 @@ LibreCap offers a privacy-friendly CAPTCHA solution that respects your users' da
 ## 📦 Installation
 
 ### Using CDN (Recommended)
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/librecap@latest"></script>
 ```
 
 ### Using npm
+
 ```bash
 npm install librecap
 ```
 
 Then import it in your project:
+
 ```javascript
-import 'librecap';
+import 'librecap'
 ```
 
 ## ⚙️ Advanced Configuration
@@ -84,13 +90,11 @@ import 'librecap';
 LibreCap can be customized by adding data attributes to your div:
 
 ```html
-<div class="librecap" 
-     data-theme="dark" 
-     data-language="en">
-</div>
+<div class="librecap" data-theme="dark" data-language="en"></div>
 ```
 
 Available configuration options:
+
 - `data-theme`: Set to `"light"`, `"dark"`, or `"auto"` (default)
 - `data-language`: Set a specific language code or `"auto"` (default)
 - `data-sitekey`: Set your LibreCap site key when using a third party gateway server (optional, only when using a third party gateway server)
@@ -99,22 +103,26 @@ Available configuration options:
 ## 💻 Development
 
 Clone the repository:
+
 ```bash
 git clone https://github.com/librecap/librecap.git
 cd librecap
 ```
 
 Install the dependencies:
+
 ```bash
 npm install
 ```
 
 Build the project:
+
 ```bash
 npm run build
 ```
 
 For development with auto-rebuilding:
+
 ```bash
 npm run dev
 ```
@@ -122,6 +130,7 @@ npm run dev
 Test the implementation by opening `demo.html` in your browser.
 
 ## 👥 Contributing
+
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the project
@@ -131,6 +140,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 5. Open a Pull Request
 
 ## 📄 License
+
 Copyright 2025 LibreCap Contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
