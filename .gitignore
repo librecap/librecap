@@ -40,11 +40,5 @@ logs/
 # Optional REPL history
 .node_repl_history
 
-# Visual Studio Code
-.vscode/
-
-# JetBrains
-.idea/
-
 # Test
 test/
