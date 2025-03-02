@@ -1,0 +1,197 @@
+.libre-captcha-widget {
+	--libre-captcha-bg: #ffffff;
+	--libre-captcha-border: #e0e0e0;
+	--libre-captcha-text: #545454;
+	--libre-captcha-checkbox-border: #c5c5c5;
+	--libre-captcha-checkbox-checked: #0074bf;
+	--libre-captcha-brand-color: #000000;
+	--libre-captcha-link-hover: #555555;
+	--libre-captcha-spinner-color: #888888;
+
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 300px;
+	height: 74px;
+	border: 1px solid var(--libre-captcha-border);
+	border-radius: 3px;
+	background-color: var(--libre-captcha-bg);
+	padding: 0 16px;
+	box-sizing: border-box;
+	font-family:
+		Ubuntu,
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		Roboto,
+		Oxygen,
+		Ubuntu,
+		Cantarell,
+		'Open Sans',
+		'Helvetica Neue',
+		sans-serif;
+}
+
+.libre-captcha-widget[data-theme='dark'] {
+	--libre-captcha-bg: #1e1e1e;
+	--libre-captcha-border: #2d2d2d;
+	--libre-captcha-text: #ffffff;
+	--libre-captcha-checkbox-border: #404040;
+	--libre-captcha-checkbox-checked: #2b87d3;
+	--libre-captcha-brand-color: #ffffff;
+	--libre-captcha-link-hover: #ffffff;
+	--libre-captcha-spinner-color: #aaaaaa;
+}
+
+@media (prefers-color-scheme: dark) {
+	.libre-captcha-widget[data-theme='auto'] {
+		--libre-captcha-bg: #1e1e1e;
+		--libre-captcha-border: #2d2d2d;
+		--libre-captcha-text: #ffffff;
+		--libre-captcha-checkbox-border: #404040;
+		--libre-captcha-checkbox-checked: #2b87d3;
+		--libre-captcha-brand-color: #ffffff;
+		--libre-captcha-link-hover: #ffffff;
+		--libre-captcha-spinner-color: #aaaaaa;
+	}
+}
+
+@keyframes libreCaptchaSpin {
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+.libre-captcha-widget,
+.libre-captcha-widget * {
+	transition:
+		background-color 0.3s ease,
+		border-color 0.3s ease,
+		color 0.3s ease;
+}
+
+.libre-captcha-widget .checkbox-container {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.libre-captcha-widget .checkbox-wrapper {
+	position: relative;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.libre-captcha-widget .captcha-checkbox {
+	appearance: none;
+	-webkit-appearance: none;
+	width: 24px;
+	height: 24px;
+	border: 2px solid var(--libre-captcha-checkbox-border);
+	border-radius: 3px;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	transition: all 0.2s ease;
+	background-color: transparent;
+	box-sizing: border-box;
+}
+
+.libre-captcha-widget .captcha-checkbox:checked {
+	background-color: var(--libre-captcha-checkbox-checked);
+	border-color: var(--libre-captcha-checkbox-checked);
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.libre-captcha-widget .captcha-checkbox:checked::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 45%;
+	width: 6px;
+	height: 11px;
+	border: solid white;
+	border-width: 0 2px 2px 0;
+	transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.libre-captcha-widget.loading .captcha-checkbox {
+	opacity: 0;
+}
+
+.libre-captcha-widget .loading-spinner {
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 24px;
+	height: 24px;
+}
+
+.libre-captcha-widget .loading-spinner::after {
+	content: '';
+	box-sizing: border-box;
+	position: absolute;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	border: 4px solid transparent;
+	border-top-color: var(--libre-captcha-spinner-color);
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	animation: libreCaptchaSpin 0.8s linear infinite;
+}
+
+.libre-captcha-widget.loading .loading-spinner {
+	display: block;
+}
+
+.libre-captcha-widget .captcha-label {
+	color: var(--libre-captcha-text);
+	font-size: 14px;
+	user-select: none;
+	font-weight: 500;
+}
+
+.libre-captcha-widget .branding-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.libre-captcha-widget .captcha-brand {
+	font-family: Arial, sans-serif;
+	font-size: 15px;
+	color: var(--libre-captcha-brand-color);
+	font-style: italic;
+	font-weight: bold;
+	letter-spacing: 0.5px;
+	margin-bottom: 4px;
+}
+
+.libre-captcha-widget .links-container {
+	display: flex;
+	gap: 8px;
+	font-size: 10px;
+}
+
+.libre-captcha-widget .links-container a {
+	color: var(--libre-captcha-text);
+	text-decoration: none;
+	transition:
+		color 0.2s ease,
+		opacity 0.2s ease;
+	opacity: 0.8;
+}
+
+.libre-captcha-widget .links-container a:hover {
+	color: var(--libre-captcha-link-hover);
+	opacity: 1;
+}
