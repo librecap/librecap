@@ -1,8 +1,9 @@
 {
   "name": "librecap",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "An open-source CAPTCHA Box alternative designed with privacy and data protection in mind.",
   "main": "dist/librecap.js",
+  "jsdelivr": "dist/librecap.min.js",
   "scripts": {
     "build": "node build.js",
     "dev": "webpack --mode=development",
