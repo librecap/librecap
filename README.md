@@ -38,7 +38,7 @@ Add a CAPTCHA box to your website by inserting this div wherever you need verifi
 <div class="librecap"></div>
 ```
 
-That's it! The default configuration works out of the box using your self hosted "gateway" server.
+That's it! The default configuration works out of the box using your own server implementation that can be found [here](https://github.com/librecap/librecap-server).
 
 ## 📋 Table of Contents
 
