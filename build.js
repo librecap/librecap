@@ -58,7 +58,7 @@ function processJsFile(filePath) {
 
 // Main build function
 async function build() {
-	console.log('Building librecap.js and librecap-min.js...')
+	console.log('Building librecap.js and librecap.min.js...')
 
 	// Process CSS files
 	const popupCssVar = await processCssFile(path.resolve(__dirname, 'src/popup.css'), 'POPUP_CSS')
@@ -140,7 +140,7 @@ function injectCSS(css) {
 	}
 
 	// Write minified version with license header
-	fs.writeFileSync(path.resolve(distDir, 'librecap-min.js'), licenseHeader + minified.code)
+	fs.writeFileSync(path.resolve(distDir, 'librecap.min.js'), licenseHeader + minified.code)
 
 	console.log('Build complete!')
 }
