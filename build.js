@@ -70,9 +70,9 @@ async function build() {
 
 	// Function to inject CSS into DOM
 	const injectCssFunc = `
-function injectCSS(css) {
+function injectCSS(...cssStrings) {
   const style = document.createElement('style');
-  style.innerHTML = css;
+  style.innerHTML = cssStrings.join('\\n');
   document.head.appendChild(style);
 }`
 
@@ -83,9 +83,8 @@ function injectCSS(css) {
 	const modifiedIndexJs = indexJsContent.replace(
 		/constructor\(\) {/,
 		`constructor() {
-    // Inject CSS
-    injectCSS(POPUP_CSS);
-    injectCSS(WIDGET_CSS);`
+    // Inject CSS into a single style element
+    injectCSS(POPUP_CSS, WIDGET_CSS);`
 	)
 
 	// Combine all code

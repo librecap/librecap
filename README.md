@@ -30,8 +30,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.5/dist/librecap-min.js"
-	integrity="sha512-qSBeGLHdzLpteaMRuBChrsiagvgSMTYgirW0E2Bw5i/QZLXzdAlNYHD+tDCC90W5FnQ00q1Fddx7Gpse1QCrHg=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.6/dist/librecap-min.js"
+	integrity="sha512-1SvyTokIG7escH20MFcc7NfrV7RzTr3c2+xs+4e7B7xpzfRmibwG9wry8KXizW4DRCRcIMzLXYrkX3l47nqqqA=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -75,8 +75,8 @@ LibreCap offers a privacy-friendly CAPTCHA solution that respects your users' da
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.5/dist/librecap-min.js"
-	integrity="sha512-qSBeGLHdzLpteaMRuBChrsiagvgSMTYgirW0E2Bw5i/QZLXzdAlNYHD+tDCC90W5FnQ00q1Fddx7Gpse1QCrHg=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.6/dist/librecap-min.js"
+	integrity="sha512-1SvyTokIG7escH20MFcc7NfrV7RzTr3c2+xs+4e7B7xpzfRmibwG9wry8KXizW4DRCRcIMzLXYrkX3l47nqqqA=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -104,7 +104,7 @@ LibreCap can be customized by adding data attributes to your div:
 Available configuration options:
 
 - `data-theme`: Set to `"light"`, `"dark"`, or `"auto"` (default)
-- `data-language`: Set a specific language code or `"auto"` (default)
+- `data-language`: Set a specific language code after ISO 639-1 or `"auto"` (default)
 - `data-sitekey`: Set your LibreCap site key when using a third party gateway server (optional, only when using a third party gateway server)
 - `data-gateway`: Set the URL of your LibreCap gateway server or your own server address (default: `https://librecap.tn3w.dev`)
 
@@ -127,12 +127,6 @@ Build the project:
 
 ```bash
 npm run build
-```
-
-For development with auto-rebuilding:
-
-```bash
-npm run dev
 ```
 
 Test the implementation by opening `demo.html` in your browser.
