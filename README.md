@@ -29,7 +29,11 @@
 Add the script tag to your HTML file:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/librecap@0.2.3/dist/librecap-min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.3/dist/librecap-min.js"
+	integrity="sha512-lWylZ9jDZlgvLHCQSZeJXLTXAtBLqZeXySa4i+x4+Qh+pPVeMAdUl1vfESaouk2ci6+aDNhYku9ZX3UQs2jzjg=="
+	crossorigin="anonymous"
+></script>
 ```
 
 Add a CAPTCHA box to your website by inserting this div wherever you need verification:
@@ -70,7 +74,11 @@ LibreCap offers a privacy-friendly CAPTCHA solution that respects your users' da
 ### Using CDN (Recommended)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/librecap@0.2.3/dist/librecap-min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.3/dist/librecap-min.js"
+	integrity="sha512-lWylZ9jDZlgvLHCQSZeJXLTXAtBLqZeXySa4i+x4+Qh+pPVeMAdUl1vfESaouk2ci6+aDNhYku9ZX3UQs2jzjg=="
+	crossorigin="anonymous"
+></script>
 ```
 
 ### Using npm
