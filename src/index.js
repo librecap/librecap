@@ -26,7 +26,7 @@ class Librecap {
 		const container = document.createElement('div')
 		container.className = 'libre-captcha-widget'
 
-		// Get theme from data-theme attribute or default to 'auto' instead of 'light'
+		// Get theme from data-theme attribute or 'auto'
 		const theme = element.getAttribute('data-theme') || 'auto'
 		container.setAttribute('data-theme', theme)
 
