@@ -132,7 +132,17 @@ Build the project:
 npm run build
 ```
 
-Test the implementation by opening `demo.html` in your browser.
+Start the demo server:
+
+Install express and cors before running the demo server.
+```bash
+npm install express cors
+```
+
+```bash
+npm run demo
+```
+
 
 ## 👥 Contributing
 
