@@ -44,6 +44,11 @@ Add a CAPTCHA box to your website by inserting this div wherever you need verifi
 
 That's it! The default configuration works out of the box using your own server implementation that can be found [here](https://github.com/librecap/librecap-server).
 
+## 📸 Screenshots
+
+![LibreCap Light Theme](https://github.com/librecap/librecap/releases/download/v0.2.8-img/widget-light.png)
+![LibreCap Dark Theme](https://github.com/librecap/librecap/releases/download/v0.2.8-img/widget-dark.png)
+
 ## 📋 Table of Contents
 
 - [Quick Start](#quick-start)
