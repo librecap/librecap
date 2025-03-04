@@ -30,8 +30,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.8/dist/librecap-min.js"
-	integrity="sha512-a566gSe9FmxlabDPvhT8f5Zc6FqpW28EHSMsLMx+LgZ6p8iVsUAghNk5FkP0yjMqKFBDyM5f5JlkNG2cqCM4Rg=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.9/dist/librecap-min.js"
+	integrity="sha512-pXAyVBB8KnBXHN7d/hg5gOG1i7VVvGsgogCXqwdoqefyADpkFP2E1tAEi9xKYoNxZJ3hsNt/8a/aDGMu07wf+Q=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -80,8 +80,8 @@ LibreCap offers a privacy-friendly CAPTCHA solution that respects your users' da
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.8/dist/librecap-min.js"
-	integrity="sha512-a566gSe9FmxlabDPvhT8f5Zc6FqpW28EHSMsLMx+LgZ6p8iVsUAghNk5FkP0yjMqKFBDyM5f5JlkNG2cqCM4Rg=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.9/dist/librecap-min.js"
+	integrity="sha512-pXAyVBB8KnBXHN7d/hg5gOG1i7VVvGsgogCXqwdoqefyADpkFP2E1tAEi9xKYoNxZJ3hsNt/8a/aDGMu07wf+Q=="
 	crossorigin="anonymous"
 ></script>
 ```
