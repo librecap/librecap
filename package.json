@@ -1,12 +1,18 @@
 {
 	"name": "librecap",
-	"version": "0.2.6",
+	"version": "0.2.7",
 	"description": "An open-source CAPTCHA Box alternative designed with privacy and data protection in mind.",
 	"main": "dist/librecap.js",
 	"jsdelivr": "dist/librecap.js",
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
 	"scripts": {
 		"build": "node build.js",
-		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,scss,md,html}\""
+		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,scss,md,html}\"",
+		"demo": "node build.js && node serve-demo.js"
 	},
 	"keywords": [],
 	"author": "",
@@ -17,5 +23,9 @@
 		"postcss": "^8.5.3",
 		"prettier": "^3.5.2",
 		"uglify-js": "^3.19.3"
+	},
+	"dependencies": {
+		"express": "^4.18.2",
+		"cors": "^2.8.5"
 	}
 }

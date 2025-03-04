@@ -30,8 +30,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.6/dist/librecap-min.js"
-	integrity="sha512-1SvyTokIG7escH20MFcc7NfrV7RzTr3c2+xs+4e7B7xpzfRmibwG9wry8KXizW4DRCRcIMzLXYrkX3l47nqqqA=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.7/dist/librecap-min.js"
+	integrity="sha512-oMXbRXeAzvppEd+mf/IlV4cmp1+XqjDgOa8q0t+HS9SROfiES/rFO+CMVKU9uJX4Ut3ziJhzB9LAjbdYig2cDw=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -75,8 +75,8 @@ LibreCap offers a privacy-friendly CAPTCHA solution that respects your users' da
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.6/dist/librecap-min.js"
-	integrity="sha512-1SvyTokIG7escH20MFcc7NfrV7RzTr3c2+xs+4e7B7xpzfRmibwG9wry8KXizW4DRCRcIMzLXYrkX3l47nqqqA=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.7/dist/librecap-min.js"
+	integrity="sha512-oMXbRXeAzvppEd+mf/IlV4cmp1+XqjDgOa8q0t+HS9SROfiES/rFO+CMVKU9uJX4Ut3ziJhzB9LAjbdYig2cDw=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -106,7 +106,10 @@ Available configuration options:
 - `data-theme`: Set to `"light"`, `"dark"`, or `"auto"` (default)
 - `data-language`: Set a specific language code after ISO 639-1 or `"auto"` (default)
 - `data-sitekey`: Set your LibreCap site key when using a third party gateway server (optional, only when using a third party gateway server)
-- `data-gateway`: Set the URL of your LibreCap gateway server or your own server address (default: `https://librecap.tn3w.dev`)
+- `data-gateway`: Set the URL of your LibreCap gateway server or your own server address (default: `https://librecap.tn3w.dev/librecap/v1` when an site key is provided, otherwise `/librecap/v1`)
+- `data-brand-title`: Set the title of the brand (default: `"LibreCap"`)
+- `data-brand-url`: Set the URL of the brand (default: `"https://github.com/librecap/librecap"`)
+- `data-brand-logo`: Set the logo of the brand (default: `base64 encoded logo of LibreCap`)
 
 ## 💻 Development
 
