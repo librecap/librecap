@@ -51,6 +51,16 @@ class PowChallenge {
 	}
 }
 
+class ImageCaptchaChallenge {
+	constructor(nonce, timestamp, signature, indicesHash, images) {
+		this.nonce = nonce
+		this.timestamp = timestamp
+		this.signature = signature
+		this.indicesHash = indicesHash
+		this.images = images
+	}
+}
+
 function parsePowChallengesBuffer(buffer) {
 	try {
 		const data = new Uint8Array(buffer)
@@ -71,6 +81,54 @@ function parsePowChallengesBuffer(buffer) {
 		}
 	} catch (error) {
 		console.error('Error parsing POW challenges buffer:', error)
+		return null
+	}
+}
+
+function splitByteArrays(buffer) {
+	const view = new DataView(buffer)
+	const arrays = []
+	let pos = 0
+
+	while (pos + 4 <= buffer.byteLength) {
+		const length = view.getUint32(pos, false)
+		pos += 4
+
+		if (pos + length > buffer.byteLength) {
+			throw new Error('Buffer is truncated')
+		}
+
+		const array = new Uint8Array(buffer, pos, length)
+		arrays.push(array)
+		pos += length
+	}
+
+	if (pos !== buffer.byteLength) {
+		throw new Error('Buffer contains extra bytes')
+	}
+
+	return arrays
+}
+
+function parseImageCaptchaChallengesBuffer(buffer) {
+	try {
+		const data = new Uint8Array(buffer)
+
+		const nonce = data.slice(0, 16)
+		const timestamp = data.slice(16, 24)
+		const signature = data.slice(24, 56)
+		const indicesHash = data.slice(56, 88)
+		const imagesData = data.slice(88)
+		const images = splitByteArrays(
+			imagesData.buffer.slice(
+				imagesData.byteOffset,
+				imagesData.byteOffset + imagesData.byteLength
+			)
+		)
+
+		return new ImageCaptchaChallenge(nonce, timestamp, signature, indicesHash, images)
+	} catch (error) {
+		console.error('Error parsing image captcha challenges buffer:', error)
 		return null
 	}
 }
@@ -132,13 +190,12 @@ async function challengeRequest(url, siteKey, challenge, solution) {
 		body: powSolutionBuffer
 	})
 
-	const responseText = await response.text()
-
 	if (!response.ok) {
 		throw new Error(`Server returned ${response.status}: ${responseText}`)
 	}
 
-	console.log('FIXME: response should be parsed for subject and images')
+	const bufferData = await response.arrayBuffer()
+	const challenges = parseImageCaptchaChallengesBuffer(bufferData)
 
-	return responseText
+	return challenges
 }
