@@ -46,8 +46,13 @@ That's it! The default configuration works out of the box using your own server 
 
 ## 📸 Screenshots
 
-![LibreCap Light Theme](https://github.com/librecap/librecap/releases/download/v0.2.8-img/widget-light.png)
-![LibreCap Dark Theme](https://github.com/librecap/librecap/releases/download/v0.2.8-img/widget-dark.png)
+![LibreCap Widget Light Theme](https://github.com/librecap/librecap/releases/download/v0.2.8-img/widget-light.png)
+![LibreCap Widget Dark Theme](https://github.com/librecap/librecap/releases/download/v0.2.8-img/widget-dark.png)
+
+<br>
+
+![LibreCap Popup Light Theme](https://github.com/librecap/librecap/releases/download/v0.2.11-img/popup-light.png)
+![LibreCap Popup Dark Theme](https://github.com/librecap/librecap/releases/download/v0.2.11-img/popup-dark.png)
 
 ## 📋 Table of Contents
 
