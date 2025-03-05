@@ -6,7 +6,7 @@ import './widget.css'
 class Librecap {
 	constructor() {
 		this.defaultLogo =
-			'data:image/webp;base64,UklGRjADAABXRUJQVlA4WAoAAAAQAAAAPwAAPwAAQUxQSHoBAAABkDr9fxppv5nMzjFzp3bVzVD9MWPdYeWR7v4HK2vXnq48dgvyGCUzX0Gt/r2YZH950UXEBMCvvbTNskxNHWYdZhHxMFaqSF4siz9OlKphZfHnMSVKD5HzXFOhLcuDpgoWctu/o7aAy1Sh+pDnXFOBJXhcpgJYPDYoGaOnNfFb5zwfc038OpNSnXj/YRAEge/7Pgp+eJ7n+b7vfX/h6BJKXSS9XiXELCS+JAQutfWICFujlsr735MRW/nbA3JbESHzCc9d2zTtdG724zMz9tYdhksgzBrbNAYArHTuQ15oVwEA5EVHjIgYLzM/ZIUzQJQ5shxGBZo8OaEBZEtTcvar6DBJqTw6EUmZIjr6pZy7KJ05lGyTiV7KujNyU1TNftSUQunbxk+K8iQ0pc/cuSZdb3IuMYd3caOmJjqxfJA0hJiLiOhdXvqYY//64BoRcZmJ5KW/o5zM++Wk/vsk//bAoRYH4aYLWteGGHTvUzroB5nVI0tk+2vgFwpWUDggkAEAAJALAJ0BKkAAQAA+nT6YSKIjoiSwGAwAsBOJbAMsAzUJsg8+U0tF6jk9Aipd+rbbT+YD9iPWV/wGox+gA1PwwoIo1V3S0s+SYvRS/jPcGN9PZ8j/DCQ+pQ2B0OLyDJQGYQzP9rIAAP7qG6PPXoChNe0jjitlmtX/4a6gWq+v3m441/+MP8XphJYPPafdOpaLrJ8kPzgbXNgyVOdFlWw8hXg/dGMocgDqDw22nuEF68gihncLuH0ROM7BodLdFfw2XmwszY95sLMeFdsnAD0nWzD8Y9gBledH06MDW9fLojscdMWfvZcB//EL6okVF9r4+XFPcnUkfMMJY+zv46tTfBC5NyIBZSkja9M1Gh3CQHuS4+3L2UdjEYPDvoynMY++FDjVzbJr038BAIQl684Q4/7xx2tOEYLu8tk2fQZJufTu5V2VKMseZBsB3WQRJoy5XDxQsvOudjiELKuwV6tuUhf+ZAFQsUB+KdFNCEAuy5jsOr2B6M1GgBAgg0cMpsI2ZTe+Q9OFmlt/4r7sTf9cAAA='
+			'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAABEVBMVEUAAAAAR3YANmcAeaMAdJ4ANWYApssAeKMAWYcAR3cApswAm8EAWocAqs8AUH4AkroARXUAo8kAfacArdIAjrYATHsApMoAcZwAlr0AdqAAn8UAbZgAc50AqM4AnsUAd6EAhK0ATXsApcoAhK0Ab5sAibIAn8UAgKkAUH4AosgAVIIAWocAOmsAOWkAXIkApMoARnUAU4EAW4gARnUAaZYATXwAZJAAstYAN2gANWYAgasANWYAZpMAa5cAYI0Af6kAcJsAXYoAc54AWYcAkLgAUX8AeqQATXsAha4AosgAl74AR3cAlLsAdqEAm8EAQnIAO2sAnsUAY48AVYIAirIApswAPm4AV4QAjLQArNEAsNTbvwG7AAAAO3RSTlMABmguB7stvGhoXBe8sL9PMg7s6XIU7uzc266KHPXt7ergzL27pnNkWT0l793LypOCckju2rSxppxG0bWmi08AAAISSURBVFjDtdRpV9pAGIbhSUGjSWuAEksaKFtZZXcvUK1FwirYiq38/x/SWEugzgNn3jn6fL/uw4Rk2OsuWNA0Q5f3Wio26/dT2aAc92djM9f3b2+rcgVt4W9uslLnT3l+EJF5DoWY5wcjQ+YEK34Ulgms+I5MoLC/9B2ZI+ippZd6iKzq+U5G7j3w/O+wVCDr+TvBgL69Oi3i+btEzre6KObV93+37+6Tu8HS93q9RMhdPB7/8LgjGySCp/P5/OFh5r2///kLd91ud3x1dXnZbrdbJyb/yCi+1drhAqck/+NEeR54R/Jf3/IBkkcBkv8GAiSPAiT/HQRIHgXW+zHvf4EAyf/c4wIfSR4FSP4aBEgeBUjeAQGSd465gBEZRTJhwwinN/lKLZ+vHyedw13GbbugP90sucQ6f1A3mTul2AgobMOMxBqfZ4Kz8e+3meh8IeQPAsKBoIqef8VkwlPx9yPsFRV+P37hQNRC70+yKBzI4fevLuqLFvROMrCR+fXFn6hi7zh7i4Jf4b0v/SWT80WjPtta54fDZC1gmsX8WXmL/zGZC3chy4qD81//88PJ5LBULk2nzeYZd4D00/U73uwn9/fTR9/cUrgAwcOASvA4QPA4QPA4QPA4QPA4QPA4QPAw8JngcYDgcYDgcYDgUYDZJN+s8ffBEcWXwOXUqIj78jkD0xs73na9vQE7N9nL7Q+B8yrHEF+yhAAAAABJRU5ErkJggg=='
 		this.init()
 		this.selectedImages = new Set()
 		this.activePopup = null
@@ -50,6 +50,8 @@ class Librecap {
 				'LibreCap is an open-source CAPTCHA alternative designed with privacy and data protection in mind.',
 			logo: element.getAttribute('data-brand-logo') || this.defaultLogo,
 			url: element.getAttribute('data-brand-url') || 'https://github.com/librecap/librecap',
+			githubUrl:
+				element.getAttribute('data-brand-github') || 'https://github.com/librecap/librecap',
 			termsUrl:
 				element.getAttribute('data-terms-url') ||
 				'https://github.com/librecap/librecap/blob/main/Terms.md',
@@ -326,6 +328,28 @@ class Librecap {
 		const icons = this.createSVGIcons()
 		const brandingInfo = popup.brandingInfo
 
+		const encodeHTML = (str) => {
+			return str.replace(/[&<>"']/g, (match) => {
+				const escape = {
+					'&': '&amp;',
+					'<': '&lt;',
+					'>': '&gt;',
+					'"': '&quot;',
+					"'": '&#39;'
+				}
+				return escape[match]
+			})
+		}
+
+		const isValidUrl = (string) => {
+			try {
+				new URL(string)
+				return true
+			} catch (_) {
+				return false
+			}
+		}
+
 		const infoContent = document.createElement('div')
 		infoContent.className = 'info-content'
 
@@ -352,42 +376,78 @@ class Librecap {
 		const logoContainer = document.createElement('div')
 		logoContainer.className = 'info-logo-container'
 
+		const brandWrapper = isValidUrl(brandingInfo.url)
+			? document.createElement('a')
+			: document.createElement('div')
+
+		if (isValidUrl(brandingInfo.url)) {
+			brandWrapper.href = encodeURI(brandingInfo.url)
+			brandWrapper.target = '_blank'
+			brandWrapper.rel = 'noopener noreferrer'
+			brandWrapper.className = 'brand-wrapper'
+		}
+
 		const logo = document.createElement('img')
 		logo.className = 'info-logo'
-		logo.src = brandingInfo.logo
+		logo.src = encodeURI(brandingInfo.logo)
+		logo.alt = encodeHTML(brandingInfo.title)
 
 		const brandTitleEl = document.createElement('div')
 		brandTitleEl.className = 'info-brand-title'
-		brandTitleEl.textContent = brandingInfo.title
+		brandTitleEl.textContent = encodeHTML(brandingInfo.title)
 
-		logoContainer.appendChild(logo)
-		logoContainer.appendChild(brandTitleEl)
+		brandWrapper.appendChild(logo)
+		brandWrapper.appendChild(brandTitleEl)
+		logoContainer.appendChild(brandWrapper)
 
 		const infoText = document.createElement('div')
 		infoText.className = 'info-text'
-		infoText.textContent = brandingInfo.description
-
-		const githubButton = document.createElement('a')
-		githubButton.href = brandingInfo.url
-		githubButton.target = '_blank'
-		githubButton.className = 'github-button'
-		githubButton.innerHTML = `<svg height="20"viewBox="0 0 24 24"width="20"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"fill="currentColor"/></svg> View Source on GitHub`
+		infoText.textContent = encodeHTML(brandingInfo.description)
 
 		const githubContainer = document.createElement('div')
 		githubContainer.className = 'github-container'
-		githubContainer.appendChild(githubButton)
+
+		if (brandingInfo.githubUrl && isValidUrl(brandingInfo.githubUrl)) {
+			const githubButton = document.createElement('a')
+			githubButton.href = encodeURI(brandingInfo.githubUrl)
+			githubButton.target = '_blank'
+			githubButton.rel = 'noopener noreferrer'
+			githubButton.className = 'github-button'
+			githubButton.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg> View Source on GitHub`
+			githubContainer.appendChild(githubButton)
+		}
 
 		const infoLinks = document.createElement('div')
 		infoLinks.className = 'info-links'
-		infoLinks.innerHTML = `
-			<a href="${brandingInfo.termsUrl}" class="info-link" target="_blank">Terms</a>
-			<a href="${brandingInfo.privacyUrl}" class="info-link" target="_blank">Privacy</a>
-		`
+
+		if (isValidUrl(brandingInfo.termsUrl)) {
+			const termsLink = document.createElement('a')
+			termsLink.href = encodeURI(brandingInfo.termsUrl)
+			termsLink.className = 'info-link'
+			termsLink.target = '_blank'
+			termsLink.rel = 'noopener noreferrer'
+			termsLink.textContent = 'Terms'
+			infoLinks.appendChild(termsLink)
+		}
+
+		if (isValidUrl(brandingInfo.privacyUrl)) {
+			const privacyLink = document.createElement('a')
+			privacyLink.href = encodeURI(brandingInfo.privacyUrl)
+			privacyLink.className = 'info-link'
+			privacyLink.target = '_blank'
+			privacyLink.rel = 'noopener noreferrer'
+			privacyLink.textContent = 'Privacy'
+			infoLinks.appendChild(privacyLink)
+		}
 
 		mainContent.appendChild(logoContainer)
 		mainContent.appendChild(infoText)
-		mainContent.appendChild(githubContainer)
-		mainContent.appendChild(infoLinks)
+		if (githubContainer.hasChildNodes()) {
+			mainContent.appendChild(githubContainer)
+		}
+		if (infoLinks.hasChildNodes()) {
+			mainContent.appendChild(infoLinks)
+		}
 
 		infoContent.appendChild(infoHeader)
 		infoContent.appendChild(mainContent)

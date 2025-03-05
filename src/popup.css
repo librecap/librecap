@@ -390,31 +390,39 @@
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
+	padding: 24px;
 	gap: 24px;
 }
 
 .libre-captcha-popup .info-logo-container {
 	display: flex;
-	flex-direction: column;
 	align-items: center;
-	gap: 16px;
-	margin-bottom: 8px;
+	gap: 4px;
+	margin-bottom: 12px;
 }
 
 .libre-captcha-popup .info-logo {
-	width: 48px;
-	height: 48px;
+	width: 40px;
+	height: 40px;
 	border-radius: 8px;
 }
 
 .libre-captcha-popup .info-brand-title {
-	font-size: 20px;
-	font-weight: 600;
+	font-family:
+		Ubuntu,
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		Roboto,
+		sans-serif;
+	font-size: 24px;
+	font-weight: 900;
 	color: var(--libre-captcha-text);
-	margin-top: 4px;
 }
 
 .libre-captcha-popup .info-text {
+	padding: 0 16px;
+	margin-bottom: 8px;
 	color: var(--libre-captcha-text);
 	font-size: 14px;
 	line-height: 1.6;
@@ -484,7 +492,6 @@
 	}
 }
 
-/* Dark theme adjustments */
 .libre-captcha-popup[data-theme='dark'] .challenge-image.selected {
 	border-color: var(--libre-captcha-selected-dark);
 	box-shadow: 0 4px 16px rgba(43, 135, 211, 0.3);
@@ -493,4 +500,20 @@
 .libre-captcha-popup[data-theme='dark'] .challenge-image.selected::after {
 	background-color: var(--libre-captcha-selected-dark);
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.libre-captcha-popup .brand-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	text-decoration: none;
+	transition: opacity 0.2s ease;
+}
+
+.libre-captcha-popup .brand-wrapper:hover {
+	opacity: 0.8;
+}
+
+.libre-captcha-popup .brand-wrapper:not(a) {
+	opacity: 1;
 }
