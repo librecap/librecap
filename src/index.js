@@ -164,6 +164,7 @@ class Librecap {
 						powSolution
 					)
 					this.createChallengePopup(container, imageChallenge, brandingInfo)
+					container.classList.remove('loading')
 				} catch (error) {
 					console.error(error)
 					this.showError(container, error.message)
