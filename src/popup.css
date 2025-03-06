@@ -199,6 +199,30 @@
 	overflow: hidden;
 }
 
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.libre-captcha-popup .challenge-button.loading {
+	pointer-events: none;
+}
+
+.libre-captcha-popup .challenge-button.force-background::before {
+	width: 150%;
+	height: 150%;
+}
+
+.libre-captcha-popup .challenge-button.loading svg {
+	animation: spin 1s linear infinite;
+	transform-origin: center;
+	opacity: 1;
+}
+
 .libre-captcha-popup .challenge-button::before {
 	content: '';
 	position: absolute;
@@ -230,7 +254,7 @@
 	transition: all 0.3s ease;
 }
 
-.libre-captcha-popup .challenge-button:nth-child(1):hover svg {
+.libre-captcha-popup .challenge-button:nth-child(1):not(.loading):hover svg {
 	transform: rotate(180deg);
 }
 
@@ -516,4 +540,11 @@
 
 .libre-captcha-popup .brand-wrapper:not(a) {
 	opacity: 1;
+}
+
+.libre-captcha-popup .challenge-progress {
+	font-size: 13px;
+	color: var(--libre-captcha-text);
+	opacity: 0.7;
+	margin-top: 8px;
 }
