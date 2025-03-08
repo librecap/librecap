@@ -274,7 +274,7 @@
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 12px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 
 .libre-captcha-popup .challenge-image {
@@ -474,12 +474,7 @@
 }
 
 .libre-captcha-popup .github-button:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.libre-captcha-popup[data-theme='dark'] .github-button:hover {
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .libre-captcha-popup .info-links {
@@ -529,9 +524,13 @@
 .libre-captcha-popup .brand-wrapper {
 	display: flex;
 	align-items: center;
-	gap: 16px;
 	text-decoration: none;
 	transition: opacity 0.2s ease;
+}
+
+.libre-captcha-popup .brand-wrapper:has(.info-logo):has(.info-brand-title),
+.libre-captcha-popup .brand-wrapper:has(.captcha-logo):has(.captcha-title) {
+	gap: 16px;
 }
 
 .libre-captcha-popup .brand-wrapper:hover {

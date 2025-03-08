@@ -1,7 +1,7 @@
 const WORKERS_COUNT = Math.min(navigator.hardwareConcurrency || 4, 8)
 const WORKER_SCRIPT = ``
 
-async function solve_pow_challenge(challenge) {
+export async function solve_pow_challenge(challenge) {
 	return new Promise((resolve, reject) => {
 		const activeWorkers = []
 
@@ -154,7 +154,7 @@ function generatePowSolutionBuffer(pow_challenge, solution) {
 	}
 }
 
-async function initialRequest(url, siteKey) {
+export async function initialRequest(url, siteKey) {
 	const headers = siteKey ? { 'Librecap-Site-Key': siteKey } : {}
 	try {
 		const response = await fetch(url + '/initial', { headers })
@@ -166,14 +166,14 @@ async function initialRequest(url, siteKey) {
 		const challenges = parsePowChallengesBuffer(bufferData)
 
 		return challenges
-	} catch (error) {
+	} catch {
 		throw new Error(
 			`The server is not available. Please provide an valid site key or server url. Try again later.`
 		)
 	}
 }
 
-async function challengeRequest(url, siteKey, challenge, solution) {
+export async function challengeRequest(url, siteKey, challenge, solution) {
 	const powSolutionBuffer = generatePowSolutionBuffer(challenge, solution)
 
 	if (!powSolutionBuffer) {
@@ -191,7 +191,7 @@ async function challengeRequest(url, siteKey, challenge, solution) {
 	})
 
 	if (!response.ok) {
-		throw new Error(`Server returned ${response.status}: ${responseText}`)
+		throw new Error(`Server returned ${response.status}: ${response.statusText}`)
 	}
 
 	const bufferData = await response.arrayBuffer()

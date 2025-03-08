@@ -30,8 +30,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.14/dist/librecap-min.js"
-	integrity="sha512-AdtSYvzS8IkqXVKHap4vzRxzy+ZnSfNVZLTUOzLLL3hw3ubXGnFatVEPIFdkDwU+IyjKkHqSknb2kF2hb2ZT6A=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.15/dist/librecap-min.js"
+	integrity="sha512-kcNUsz4IdfItxRYsk0uhN/Hroy5//lJpT9OvoWERpXVqmH9a4FVkOJN10ifiqBnSVhQF8CayuqW2oCvq/TaSsw=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -56,15 +56,16 @@ That's it! The default configuration works out of the box using your own server 
 
 ## 📋 Table of Contents
 
-- [Quick Start](#quick-start)
-- [Overview](#overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Advanced Configuration](#advanced-configuration)
-- [Development](#development)
-- [Browser Compatibility](#browser-compatibility)
-- [Contributing](#contributing)
-- [License](#license)
+- [Quick Start](#-quick-start)
+- [Screenshots](#-screenshots)
+- [Overview](#-overview)
+- [Features](#-features)
+- [Installation](#-installation)
+- [Advanced Configuration](#-advanced-configuration)
+- [Development](#-development)
+- [Browser Compatibility](#-browser-compatibility)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🌟 Overview
 
@@ -85,8 +86,8 @@ LibreCap offers a privacy-friendly CAPTCHA solution that respects your users' da
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.14/dist/librecap-min.js"
-	integrity="sha512-AdtSYvzS8IkqXVKHap4vzRxzy+ZnSfNVZLTUOzLLL3hw3ubXGnFatVEPIFdkDwU+IyjKkHqSknb2kF2hb2ZT6A=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.15/dist/librecap-min.js"
+	integrity="sha512-kcNUsz4IdfItxRYsk0uhN/Hroy5//lJpT9OvoWERpXVqmH9a4FVkOJN10ifiqBnSVhQF8CayuqW2oCvq/TaSsw=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -114,12 +115,16 @@ LibreCap can be customized by adding data attributes to your div:
 Available configuration options:
 
 - `data-theme`: Set to `"light"`, `"dark"`, or `"auto"` (default)
-- `data-language`: Set a specific language code after ISO 639-1 or `"auto"` (default)
+- `data-language`: NOT IMPLEMENTED YET, Set a specific language code after ISO 639-1 or `"auto"` (default)
 - `data-sitekey`: Set your LibreCap site key when using a third party gateway server (optional, only when using a third party gateway server)
-- `data-gateway`: Set the URL of your LibreCap gateway server or your own server address (default: `https://librecap.tn3w.dev/librecap/v1` when an site key is provided, otherwise `/librecap/v1`)
+- `data-endpoint`: Set the URL of your LibreCap endpoint, this could be an gateway server or your own server address (default: `https://librecap.tn3w.dev/librecap/v1` when an site key is provided, otherwise `/librecap/v1`)
 - `data-brand-title`: Set the title of the brand (default: `"LibreCap"`)
 - `data-brand-url`: Set the URL of the brand (default: `"https://github.com/librecap/librecap"`)
 - `data-brand-logo`: Set the logo of the brand (default: `base64 encoded logo of LibreCap`)
+- `data-brand-description`: Set the description of the brand (default: `"LibreCap is a privacy-friendly CAPTCHA solution that respects your users' data."`)
+- `data-brand-github`: Set the GitHub URL of the brand (default: `"https://github.com/librecap/librecap"`)
+- `data-brand-terms`: Set the terms URL of the brand (default: `"https://github.com/librecap/librecap/blob/main/TERMS.md"`)
+- `data-brand-privacy`: Set the privacy URL of the brand (default: `"https://github.com/librecap/librecap/blob/main/PRIVACY.md"`)
 
 ## 💻 Development
 

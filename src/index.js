@@ -3,31 +3,136 @@ import { solve_pow_challenge, initialRequest, challengeRequest } from './challen
 import './popup.css'
 import './widget.css'
 
+class CaptchaConfig {
+	constructor({
+		siteKey,
+		apiEndpoint,
+		title,
+		description,
+		logo,
+		url,
+		githubUrl,
+		termsUrl,
+		privacyUrl
+	}) {
+		const defaults = {
+			title: 'LibreCap',
+			description:
+				'LibreCap is an open-source CAPTCHA alternative designed with privacy and data protection in mind.',
+			logo: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAABEVBMVEUAAAAAR3YANmcAeaMAdJ4ANWYApssAeKMAWYcAR3cApswAm8EAWocAqs8AUH4AkroARXUAo8kAfacArdIAjrYATHsApMoAcZwAlr0AdqAAn8UAbZgAc50AqM4AnsUAd6EAhK0ATXsApcoAhK0Ab5sAibIAn8UAgKkAUH4AosgAVIIAWocAOmsAOWkAXIkApMoARnUAU4EAW4gARnUAaZYATXwAZJAAstYAN2gANWYAgasANWYAZpMAa5cAYI0Af6kAcJsAXYoAc54AWYcAkLgAUX8AeqQATXsAha4AosgAl74AR3cAlLsAdqEAm8EAQnIAO2sAnsUAY48AVYIAirIApswAPm4AV4QAjLQArNEAsNTbvwG7AAAAO3RSTlMABmguB7stvGhoXBe8sL9PMg7s6XIU7uzc266KHPXt7ergzL27pnNkWT0l793LypOCckju2rSxppxG0bWmi08AAAISSURBVFjDtdRpV9pAGIbhSUGjSWuAEksaKFtZZXcvUK1FwirYiq38/x/SWEugzgNn3jn6fL/uw4Rk2OsuWNA0Q5f3Wio26/dT2aAc92djM9f3b2+rcgVt4W9uslLnT3l+EJF5DoWY5wcjQ+YEK34Ulgms+I5MoLC/9B2ZI+ippZd6iKzq+U5G7j3w/O+wVCDr+TvBgL69Oi3i+btEzre6KObV93+37+6Tu8HS93q9RMhdPB7/8LgjGySCp/P5/OFh5r2///kLd91ud3x1dXnZbrdbJyb/yCi+1drhAqck/+NEeR54R/Jf3/IBkkcBkv8GAiSPAiT/HQRIHgXW+zHvf4EAyf/c4wIfSR4FSP4aBEgeBUjeAQGSd465gBEZRTJhwwinN/lKLZ+vHyedw13GbbugP90sucQ6f1A3mTul2AgobMOMxBqfZ4Kz8e+3meh8IeQPAsKBoIqef8VkwlPx9yPsFRV+P37hQNRC70+yKBzI4fevLuqLFvROMrCR+fXFn6hi7zh7i4Jf4b0v/SWT80WjPtta54fDZC1gmsX8WXmL/zGZC3chy4qD81//88PJ5LBULk2nzeYZd4D00/U73uwn9/fTR9/cUrgAwcOASvA4QPA4QPA4QPA4QPA4QPA4QPAw8JngcYDgcYDgcYDgUYDZJN+s8ffBEcWXwOXUqIj78jkD0xs73na9vQE7N9nL7Q+B8yrHEF+yhAAAAABJRU5ErkJggg==',
+			url: 'https://github.com/librecap/librecap',
+			githubUrl: 'https://github.com/librecap/librecap',
+			termsUrl: 'https://github.com/librecap/librecap/blob/main/TERMS.md',
+			privacyUrl: 'https://github.com/librecap/librecap/blob/main/PRIVACY.md'
+		}
+
+		this.siteKey = siteKey
+		this.apiEndpoint = apiEndpoint
+
+		const htmlEscape = (str) => {
+			if (typeof str !== 'string') return str
+			return str.replace(
+				/[&<>"']/g,
+				(match) =>
+					({
+						'&': '&amp;',
+						'<': '&lt;',
+						'>': '&gt;',
+						'"': '&quot;',
+						"'": '&#39;'
+					})[match]
+			)
+		}
+
+		const getConfigValue = (value, defaultValue, shouldEscape = true) => {
+			const configValue =
+				value === null ? undefined : value !== undefined ? value : defaultValue
+			return shouldEscape && typeof configValue === 'string'
+				? htmlEscape(configValue)
+				: configValue
+		}
+
+		const getConfigValueAndCheckUrl = (value, defaultValue) => {
+			const configValue = getConfigValue(value, defaultValue, false)
+			if (!configValue) return undefined
+
+			try {
+				const url = new URL(configValue)
+				const escapedUrl =
+					url.protocol +
+					'//' +
+					htmlEscape(url.hostname) +
+					(url.port ? ':' + url.port : '') +
+					htmlEscape(url.pathname) +
+					(url.search ? htmlEscape(url.search) : '') +
+					(url.hash ? htmlEscape(url.hash) : '')
+				return escapedUrl
+			} catch {
+				return undefined
+			}
+		}
+
+		this.title = getConfigValue(title, defaults.title)
+		this.description = getConfigValue(description, defaults.description)
+		this.logo = getConfigValue(logo, defaults.logo, false)
+		this.url = getConfigValueAndCheckUrl(url, defaults.url)
+		this.githubUrl = getConfigValueAndCheckUrl(githubUrl, defaults.githubUrl)
+		this.termsUrl = getConfigValueAndCheckUrl(termsUrl, defaults.termsUrl)
+		this.privacyUrl = getConfigValueAndCheckUrl(privacyUrl, defaults.privacyUrl)
+	}
+}
+
 class Librecap {
 	constructor() {
-		this.defaultLogo =
-			'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAABEVBMVEUAAAAAR3YANmcAeaMAdJ4ANWYApssAeKMAWYcAR3cApswAm8EAWocAqs8AUH4AkroARXUAo8kAfacArdIAjrYATHsApMoAcZwAlr0AdqAAn8UAbZgAc50AqM4AnsUAd6EAhK0ATXsApcoAhK0Ab5sAibIAn8UAgKkAUH4AosgAVIIAWocAOmsAOWkAXIkApMoARnUAU4EAW4gARnUAaZYATXwAZJAAstYAN2gANWYAgasANWYAZpMAa5cAYI0Af6kAcJsAXYoAc54AWYcAkLgAUX8AeqQATXsAha4AosgAl74AR3cAlLsAdqEAm8EAQnIAO2sAnsUAY48AVYIAirIApswAPm4AV4QAjLQArNEAsNTbvwG7AAAAO3RSTlMABmguB7stvGhoXBe8sL9PMg7s6XIU7uzc266KHPXt7ergzL27pnNkWT0l793LypOCckju2rSxppxG0bWmi08AAAISSURBVFjDtdRpV9pAGIbhSUGjSWuAEksaKFtZZXcvUK1FwirYiq38/x/SWEugzgNn3jn6fL/uw4Rk2OsuWNA0Q5f3Wio26/dT2aAc92djM9f3b2+rcgVt4W9uslLnT3l+EJF5DoWY5wcjQ+YEK34Ulgms+I5MoLC/9B2ZI+ippZd6iKzq+U5G7j3w/O+wVCDr+TvBgL69Oi3i+btEzre6KObV93+37+6Tu8HS93q9RMhdPB7/8LgjGySCp/P5/OFh5r2///kLd91ud3x1dXnZbrdbJyb/yCi+1drhAqck/+NEeR54R/Jf3/IBkkcBkv8GAiSPAiT/HQRIHgXW+zHvf4EAyf/c4wIfSR4FSP4aBEgeBUjeAQGSd465gBEZRTJhwwinN/lKLZ+vHyedw13GbbugP90sucQ6f1A3mTul2AgobMOMxBqfZ4Kz8e+3meh8IeQPAsKBoIqef8VkwlPx9yPsFRV+P37hQNRC70+yKBzI4fevLuqLFvROMrCR+fXFn6hi7zh7i4Jf4b0v/SWT80WjPtta54fDZC1gmsX8WXmL/zGZC3chy4qD81//88PJ5LBULk2nzeYZd4D00/U73uwn9/fTR9/cUrgAwcOASvA4QPA4QPA4QPA4QPA4QPA4QPAw8JngcYDgcYDgcYDgUYDZJN+s8ffBEcWXwOXUqIj78jkD0xs73na9vQE7N9nL7Q+B8yrHEF+yhAAAAABJRU5ErkJggg=='
 		this.init()
 		this.selectedImages = new Set()
 		this.activePopup = null
 		this.activeOverlay = null
 		this.activeInfoPage = null
 		this.currentView = 'challenge'
-		this.currentPowChallenge = null;
-		this.currentImageChallenge = null;
-		this.currentChallengeIndex = 0;
-		this.totalChallenges = 1;
-		this.selectedImagesPerChallenge = [];
+		this.currentPowChallenge = null
+		this.currentImageChallenge = null
+		this.currentChallengeIndex = 0
+		this.totalChallenges = 1
+		this.selectedImagesPerChallenge = []
+		this._resizeHandler = null
+	}
+
+	createImageElement(imageBytes, onLoadCallback = null) {
+		const blob = new Blob([imageBytes], { type: 'image/webp' })
+		const img = document.createElement('img')
+		const url = URL.createObjectURL(blob)
+		img.src = url
+		img.onload = () => {
+			URL.revokeObjectURL(url)
+			if (onLoadCallback) onLoadCallback()
+		}
+		return img
+	}
+
+	updateVerifyButton(button, challengeIndex) {
+		if (!button) return
+		const isLastChallenge = challengeIndex === this.totalChallenges - 1
+		button.disabled = this.selectedImagesPerChallenge[challengeIndex]?.size === 0
+		button.textContent = isLastChallenge ? 'VERIFY' : 'NEXT'
+	}
+
+	cleanup() {
+		if (this._resizeHandler) {
+			window.removeEventListener('resize', this._resizeHandler)
+			this._resizeHandler = null
+		}
+		if (this.activePopup) {
+			this.activePopup.remove()
+			this.activePopup = null
+		}
 	}
 
 	init() {
 		const libreCaptchaWidgetElements = document.querySelectorAll(
 			'.librecap, .librecaptcha, .libre-captcha'
 		)
-
-		libreCaptchaWidgetElements.forEach((widget) => {
-			this.createCaptchaWidget(widget)
-		})
+		libreCaptchaWidgetElements.forEach((widget) => this.createCaptchaWidget(widget))
 	}
 
 	showError(widgetElement, errorMessage) {
@@ -41,96 +146,104 @@ class Librecap {
 		}, 5000)
 	}
 
-	async newImageChallenge(container, brandingInfo) {
+	async newImageChallenge(container, config) {
 		try {
-			const powChallenges = await initialRequest(brandingInfo.gatewayUrl, brandingInfo.siteKey)
+			const powChallenges = await initialRequest(config.apiEndpoint, config.siteKey)
 			const powSolution = await solve_pow_challenge(powChallenges.first)
 			const imageChallenge = await challengeRequest(
-				brandingInfo.gatewayUrl,
-				brandingInfo.siteKey,
+				config.apiEndpoint,
+				config.siteKey,
 				powChallenges.first,
 				powSolution
 			)
 
-			// Store current challenges
-			this.currentPowChallenge = powChallenges.second;
-			this.currentImageChallenge = imageChallenge;
-
+			this.currentPowChallenge = powChallenges.second
+			this.currentImageChallenge = imageChallenge
 			this.selectedImages.clear()
-			
-			// Reset to the first challenge grid
-			this.currentChallengeIndex = 0;
-			this.totalChallenges = Math.floor((imageChallenge.images.length - 1) / 9);
-			this.selectedImagesPerChallenge = new Array(this.totalChallenges).fill().map(() => new Set());
+
+			this.currentChallengeIndex = 0
+			this.totalChallenges = Math.floor((imageChallenge.images.length - 1) / 9)
+			this.selectedImagesPerChallenge = Array(this.totalChallenges)
+				.fill()
+				.map(() => new Set())
 
 			if (this.activePopup) {
-				// Update the progress indicator if it exists
-				const progressIndicator = this.activePopup.querySelector('.challenge-progress');
-				if (progressIndicator) {
-					progressIndicator.textContent = `Challenge ${this.currentChallengeIndex + 1} of ${this.totalChallenges}`;
-				}
-
-				const exampleImage = this.activePopup.querySelector('.example-image img')
-				const exampleBlob = new Blob([imageChallenge.images[0]], { type: 'image/webp' })
-				const exampleUrl = URL.createObjectURL(exampleBlob)
-				exampleImage.src = exampleUrl
-				exampleImage.onload = () => URL.revokeObjectURL(exampleUrl)
-
-				// Clear the grid and recreate it with new images
-				const grid = this.activePopup.querySelector('.challenge-grid');
-				if (grid) {
-					grid.innerHTML = '';
-					// Create new image elements for the first challenge
-					const startIndex = 0; // Always start with the first challenge
-					for (let i = startIndex; i < startIndex + 9; i++) {
-						const imageContainer = document.createElement('div');
-						imageContainer.className = 'challenge-image';
-						
-						const imageBytes = imageChallenge.images[i + 1];
-						const blob = new Blob([imageBytes], { type: 'image/webp' });
-						const img = document.createElement('img');
-						img.src = URL.createObjectURL(blob);
-						
-						imageContainer.appendChild(img);
-						
-						img.onload = () => URL.revokeObjectURL(img.src);
-						
-						// Add click event listener
-						const verifyButton = this.activePopup.querySelector('.verify-button');
-						imageContainer.addEventListener('click', () => {
-							imageContainer.classList.toggle('selected');
-							if (imageContainer.classList.contains('selected')) {
-								this.selectedImagesPerChallenge[this.currentChallengeIndex].add(i - startIndex);
-							} else {
-								this.selectedImagesPerChallenge[this.currentChallengeIndex].delete(i - startIndex);
-							}
-							if (verifyButton) {
-								verifyButton.disabled = this.selectedImagesPerChallenge[this.currentChallengeIndex].size === 0;
-							}
-						});
-						
-						grid.appendChild(imageContainer);
-					}
-				}
-
-				const verifyButton = this.activePopup.querySelector('.verify-button')
-				if (verifyButton) {
-					verifyButton.disabled = true
-					
-					// Reset button text to show NEXT if there are multiple challenges
-					verifyButton.textContent = this.totalChallenges > 1 ? 'NEXT' : 'VERIFY';
-				}
-
-				if (this.currentView === 'info') {
-					this.showChallengeView(this.activePopup)
-				}
+				this.updateExistingPopup(imageChallenge)
 			} else {
-				this.createChallengePopup(container, imageChallenge, brandingInfo)
+				this.createChallengePopup(container, imageChallenge, config)
 			}
 		} catch (error) {
-			console.error(error)
-			this.showError(container, error.message)
+			console.error('Challenge error:', error)
+			this.showError(container, error.message || 'Failed to load challenge')
 			container.classList.remove('loading')
+		}
+	}
+
+	updateExistingPopup(imageChallenge) {
+		const progressIndicator = this.activePopup.querySelector('.challenge-progress')
+		if (progressIndicator) {
+			progressIndicator.textContent = `Challenge ${this.currentChallengeIndex + 1} of ${this.totalChallenges}`
+		}
+
+		const exampleImage = this.activePopup.querySelector('.example-image img')
+		if (exampleImage) {
+			const img = this.createImageElement(imageChallenge.images[0])
+			exampleImage.parentNode.replaceChild(img, exampleImage)
+		}
+
+		const grid = this.activePopup.querySelector('.challenge-grid')
+		const verifyButton = this.activePopup.querySelector('.verify-button')
+		if (grid && verifyButton) {
+			this.updateGrid(grid, imageChallenge, 0, verifyButton)
+		}
+
+		if (this.currentView === 'info') {
+			this.showChallengeView(this.activePopup)
+		}
+	}
+
+	updateGrid(grid, imageChallenge, challengeIndex, verifyButton) {
+		grid.innerHTML = ''
+		const startIndex = challengeIndex * 9
+
+		this.selectedImages = this.selectedImagesPerChallenge[challengeIndex]
+
+		if (!this.selectedImagesPerChallenge[challengeIndex]) {
+			this.selectedImagesPerChallenge[challengeIndex] = new Set()
+		}
+
+		for (let i = startIndex; i < startIndex + 9; i++) {
+			const imageContainer = document.createElement('div')
+			imageContainer.className = 'challenge-image'
+
+			if (this.selectedImagesPerChallenge[challengeIndex].has(i - startIndex)) {
+				imageContainer.classList.add('selected')
+			}
+
+			const img = this.createImageElement(imageChallenge.images[i + 1])
+			imageContainer.appendChild(img)
+
+			imageContainer.addEventListener('click', () => {
+				const wasSelected = imageContainer.classList.contains('selected')
+				imageContainer.classList.toggle('selected')
+
+				if (!wasSelected) {
+					this.selectedImagesPerChallenge[challengeIndex].add(i - startIndex)
+				} else {
+					this.selectedImagesPerChallenge[challengeIndex].delete(i - startIndex)
+				}
+
+				this.updateVerifyButton(verifyButton, challengeIndex)
+			})
+
+			grid.appendChild(imageContainer)
+		}
+
+		this.updateVerifyButton(verifyButton, challengeIndex)
+
+		const progressIndicator = this.activePopup.querySelector('.challenge-progress')
+		if (progressIndicator) {
+			progressIndicator.textContent = `Challenge ${challengeIndex + 1} of ${this.totalChallenges}`
 		}
 	}
 
@@ -141,34 +254,36 @@ class Librecap {
 		const theme = element.getAttribute('data-theme') || 'auto'
 		container.setAttribute('data-theme', theme)
 
-		const siteKey = element.getAttribute('data-site-key') || null
-		let gatewayUrl = element.getAttribute('data-gateway') || null
+		const siteKey = element.getAttribute('data-sitekey') || null
+		let apiEndpoint = element.getAttribute('data-endpoint') || null
 
-		if (!gatewayUrl) {
-			gatewayUrl = siteKey ? `https://librecap.tn3w.dev/librecap/v1` : `/librecap/v1`
+		if (!apiEndpoint) {
+			apiEndpoint = siteKey ? `https://librecap.tn3w.dev/librecap/v1` : `/librecap/v1`
 		}
 
-		const brandingInfo = {
+		const getAttr = (name) => {
+			if (element.hasAttribute(name)) {
+				const value = element.getAttribute(name)
+				if (value !== '') {
+					return value
+				}
+
+				return null
+			}
+
+			return undefined
+		}
+
+		const config = new CaptchaConfig({
 			siteKey,
-			gatewayUrl,
-			title: element.getAttribute('data-brand-title') || 'LibreCap',
-			description:
-				element.getAttribute('data-brand-description') ||
-				'LibreCap is an open-source CAPTCHA alternative designed with privacy and data protection in mind.',
-			logo: element.getAttribute('data-brand-logo') || this.defaultLogo,
-			url: element.getAttribute('data-brand-url') || 'https://github.com/librecap/librecap',
-			githubUrl:
-				element.getAttribute('data-brand-github') || 'https://github.com/librecap/librecap',
-			termsUrl:
-				element.getAttribute('data-terms-url') ||
-				'https://github.com/librecap/librecap/blob/main/Terms.md',
-			privacyUrl:
-				element.getAttribute('data-privacy-url') ||
-				'https://github.com/librecap/librecap/blob/main/Privacy.md'
-		}
-
-		Object.entries(brandingInfo).forEach(([key, value]) => {
-			container.setAttribute(`data-brand-${key}`, value)
+			apiEndpoint,
+			title: getAttr('data-brand-title'),
+			description: getAttr('data-brand-description'),
+			logo: getAttr('data-brand-logo'),
+			url: getAttr('data-brand-url'),
+			githubUrl: getAttr('data-brand-github'),
+			termsUrl: getAttr('data-terms'),
+			privacyUrl: getAttr('data-privacy')
 		})
 
 		const errorSection = document.createElement('div')
@@ -197,46 +312,65 @@ class Librecap {
 		const brandingContainer = document.createElement('div')
 		brandingContainer.className = 'branding-container'
 
-		const brandLink = document.createElement('a')
-		brandLink.href = brandingInfo.url
-		brandLink.target = '_blank'
-		brandLink.rel = 'noopener noreferrer'
-		brandLink.className = 'brand-link'
+		if (config.url !== undefined || config.title !== undefined || config.logo !== undefined) {
+			const brandLink = document.createElement(config.url !== undefined ? 'a' : 'div')
+			brandLink.className = 'brand-link'
 
-		const brandLogoImage = document.createElement('img')
-		brandLogoImage.className = 'captcha-logo'
-		brandLogoImage.src = brandingInfo.logo
+			if (config.url !== undefined) {
+				brandLink.href = config.url
+				brandLink.target = '_blank'
+				brandLink.rel = 'noopener noreferrer'
+			}
 
-		const brandTitleText = document.createElement('div')
-		brandTitleText.className = 'captcha-title'
-		brandTitleText.textContent = brandingInfo.title
+			if (config.logo !== undefined) {
+				const brandLogoImage = document.createElement('img')
+				brandLogoImage.className = 'captcha-logo'
+				brandLogoImage.src = config.logo
+				brandLink.appendChild(brandLogoImage)
+			}
 
-		brandLink.appendChild(brandLogoImage)
-		brandLink.appendChild(brandTitleText)
+			if (config.title !== undefined) {
+				const brandTitleText = document.createElement('div')
+				brandTitleText.className = 'captcha-title'
+				brandTitleText.textContent = config.title
+				brandLink.appendChild(brandTitleText)
+			}
+
+			brandingContainer.appendChild(brandLink)
+		}
 
 		const linksContainer = document.createElement('div')
 		linksContainer.className = 'links-container'
 
-		const termsLink = document.createElement('a')
-		termsLink.href = brandingInfo.termsUrl
-		termsLink.className = 'captcha-link'
-		termsLink.textContent = 'Terms'
+		if (config.termsUrl !== undefined) {
+			const termsLink = document.createElement('a')
+			termsLink.href = config.termsUrl
+			termsLink.className = 'captcha-link'
+			termsLink.textContent = 'Terms'
+			linksContainer.appendChild(termsLink)
+		}
 
-		const privacyLink = document.createElement('a')
-		privacyLink.href = brandingInfo.privacyUrl
-		privacyLink.className = 'captcha-link'
-		privacyLink.textContent = 'Privacy'
+		if (config.privacyUrl !== undefined) {
+			const privacyLink = document.createElement('a')
+			privacyLink.href = config.privacyUrl
+			privacyLink.className = 'captcha-link'
+			privacyLink.textContent = 'Privacy'
+			linksContainer.appendChild(privacyLink)
+		}
 
 		checkboxWrapper.appendChild(checkbox)
 		checkboxWrapper.appendChild(loadingSpinner)
 		checkboxContainer.appendChild(checkboxWrapper)
 		checkboxContainer.appendChild(label)
-		linksContainer.appendChild(termsLink)
-		linksContainer.appendChild(privacyLink)
-		brandingContainer.appendChild(brandLink)
-		brandingContainer.appendChild(linksContainer)
+
+		if (linksContainer.hasChildNodes()) {
+			brandingContainer.appendChild(linksContainer)
+		}
+
 		container.appendChild(checkboxContainer)
-		container.appendChild(brandingContainer)
+		if (brandingContainer.hasChildNodes()) {
+			container.appendChild(brandingContainer)
+		}
 		container.appendChild(errorSection)
 
 		element.replaceWith(container)
@@ -248,7 +382,7 @@ class Librecap {
 				container.classList.add('loading')
 
 				try {
-					await this.newImageChallenge(container, brandingInfo)
+					await this.newImageChallenge(container, config)
 					container.classList.remove('loading')
 				} catch (error) {
 					console.error(error)
@@ -270,19 +404,16 @@ class Librecap {
 		}
 	}
 
-	createChallengePopup(container, imageChallenge, brandingInfo) {
+	createChallengePopup(container, imageChallenge, config) {
 		const icons = this.createSVGIcons()
 
-		if (this.activePopup) {
-			this.activePopup.remove()
-			this.activePopup = null
-		}
+		this.cleanup()
 
 		const popup = document.createElement('div')
 		popup.className = 'libre-captcha-popup'
 		popup.style.visibility = 'hidden'
 
-		popup.brandingInfo = brandingInfo
+		popup.config = config
 		popup.triggerContainer = container
 
 		const theme = container.getAttribute('data-theme') || 'auto'
@@ -308,46 +439,36 @@ class Librecap {
 		controls.className = 'challenge-controls'
 
 		const buttons = [
-			{ icon: icons.reload, title: 'New challenge' },
+			{
+				icon: icons.reload,
+				title: 'New challenge',
+				action: () => {
+					const button = controls.children[0]
+					button.classList.add('loading', 'force-background')
+					this.newImageChallenge(container, config).finally(() => {
+						button.classList.remove('loading', 'force-background')
+					})
+				}
+			},
 			{ icon: icons.sound, title: 'Sound challenge' },
-			{ icon: icons.info, title: 'Information' }
+			{ icon: icons.info, title: 'Information', action: () => this.showInfoView(popup) }
 		]
 
-		buttons.forEach(({ icon, title }, index) => {
+		buttons.forEach(({ icon, title, action }) => {
 			const button = document.createElement('button')
 			button.className = 'challenge-button'
 			button.title = title
 			button.innerHTML = icon
-
-			if (index === 0) {
-				button.addEventListener('click', () => {
-					button.classList.add('loading')
-					button.classList.add('force-background')
-					this.newImageChallenge(container, brandingInfo)
-						.finally(() => {
-							button.classList.remove('loading')
-							button.classList.remove('force-background')
-						})
-				})
-			} else if (index === 2) {
-				button.addEventListener('click', () => {
-					this.showInfoView(popup)
-				})
+			if (action) {
+				button.addEventListener('click', action)
 			}
-
 			controls.appendChild(button)
 		})
 
 		const exampleImage = document.createElement('div')
 		exampleImage.className = 'example-image'
-		const exampleImg = document.createElement('img')
-		const blob = new Blob([imageChallenge.images[0]], { type: 'image/webp' })
-		exampleImg.src = URL.createObjectURL(blob)
+		const exampleImg = this.createImageElement(imageChallenge.images[0])
 		exampleImage.appendChild(exampleImg)
-
-		exampleImg.onload = () => {
-			URL.revokeObjectURL(exampleImg.src)
-		}
 
 		header.appendChild(title)
 		header.appendChild(controls)
@@ -355,100 +476,38 @@ class Librecap {
 		exampleSection.appendChild(exampleImage)
 		challengeView.appendChild(exampleSection)
 
-		this.totalChallenges = Math.floor((imageChallenge.images.length - 1) / 9);
-		this.currentChallengeIndex = 0;
-		this.selectedImagesPerChallenge = new Array(this.totalChallenges).fill().map(() => new Set());
+		this.totalChallenges = Math.floor((imageChallenge.images.length - 1) / 9)
+		this.currentChallengeIndex = 0
+		this.selectedImagesPerChallenge = Array(this.totalChallenges)
+			.fill()
+			.map(() => new Set())
 
-		const progressIndicator = document.createElement('div');
-		progressIndicator.className = 'challenge-progress';
-		progressIndicator.textContent = `Challenge ${this.currentChallengeIndex + 1} of ${this.totalChallenges}`;
-		header.appendChild(progressIndicator);
+		const progressIndicator = document.createElement('div')
+		progressIndicator.className = 'challenge-progress'
+		progressIndicator.textContent = `Challenge ${this.currentChallengeIndex + 1} of ${this.totalChallenges}`
+		header.appendChild(progressIndicator)
 
-		const updateGrid = (challengeIndex) => {
-			grid.innerHTML = '';
-			const startIndex = challengeIndex * 9;
-			
-			this.selectedImages = this.selectedImagesPerChallenge[challengeIndex];
+		const grid = document.createElement('div')
+		grid.className = 'challenge-grid'
 
-			if (challengeIndex === 0) {
-				const exampleImg = exampleImage.querySelector('img');
-				const exampleBlob = new Blob([imageChallenge.images[0]], { type: 'image/webp' });
-				exampleImg.src = URL.createObjectURL(exampleBlob);
-				exampleImg.onload = () => URL.revokeObjectURL(exampleImg.src);
-			}
-
-			for (let i = startIndex; i < startIndex + 9; i++) {
-				const imageContainer = document.createElement('div');
-				imageContainer.className = 'challenge-image';
-				
-				if (this.selectedImagesPerChallenge[challengeIndex].has(i - startIndex)) {
-					imageContainer.classList.add('selected');
-				}
-
-				const imageBytes = imageChallenge.images[i + 1];
-				const blob = new Blob([imageBytes], { type: 'image/webp' });
-				const img = document.createElement('img');
-				img.src = URL.createObjectURL(blob);
-
-				imageContainer.appendChild(img);
-
-				img.onload = () => URL.revokeObjectURL(img.src);
-
-				imageContainer.addEventListener('click', () => {
-					imageContainer.classList.toggle('selected');
-					if (imageContainer.classList.contains('selected')) {
-						this.selectedImagesPerChallenge[challengeIndex].add(i - startIndex);
-					} else {
-						this.selectedImagesPerChallenge[challengeIndex].delete(i - startIndex);
-					}
-					verifyButton.disabled = this.selectedImagesPerChallenge[challengeIndex].size === 0;
-				});
-
-				grid.appendChild(imageContainer);
-			}
-
-			progressIndicator.textContent = `Challenge ${challengeIndex + 1} of ${this.totalChallenges}`;
-
-			verifyButton.textContent = challengeIndex < this.totalChallenges - 1 ? 'NEXT' : 'VERIFY';
-			verifyButton.disabled = this.selectedImagesPerChallenge[challengeIndex].size === 0;
-		};
-
-		const grid = document.createElement('div');
-		grid.className = 'challenge-grid';
-
-		const verifyButton = document.createElement('button');
-		verifyButton.className = 'verify-button';
-		verifyButton.disabled = true;
-
-		verifyButton.addEventListener('click', () => {
-			if (this.currentChallengeIndex < this.totalChallenges - 1) {
-				this.currentChallengeIndex++;
-				updateGrid(this.currentChallengeIndex);
-			} else {
-				console.log('Current POW Challenge:', this.currentPowChallenge);
-				console.log('Current Image Challenge:', this.currentImageChallenge);
-				console.log('Selected Images per Challenge:', 
-					this.selectedImagesPerChallenge.map((set, index) => ({
-						challenge: index + 1,
-						selectedIndexes: Array.from(set)
-					}))
-				);
-				
-				popup.classList.remove('active');
-				this.selectedImagesPerChallenge = [];
-				this.currentChallengeIndex = 0;
-
-				const checkbox = container.querySelector('.captcha-checkbox');
-				if (checkbox) {
-					checkbox.checked = true;
-				}
-			}
-		});
-
-		updateGrid(0);
+		const verifyButton = document.createElement('button')
+		verifyButton.className = 'verify-button'
+		verifyButton.disabled = true
+		verifyButton.textContent = this.totalChallenges > 1 ? 'NEXT' : 'VERIFY'
 
 		challengeView.appendChild(grid)
 		challengeView.appendChild(verifyButton)
+
+		verifyButton.addEventListener('click', () => {
+			if (this.currentChallengeIndex < this.totalChallenges - 1) {
+				this.currentChallengeIndex++
+				this.updateGrid(grid, imageChallenge, this.currentChallengeIndex, verifyButton)
+			} else {
+				this.handleVerification(container, popup)
+			}
+		})
+
+		this.updateGrid(grid, imageChallenge, 0, verifyButton)
 
 		const infoView = this.createInfoView(popup)
 
@@ -463,43 +522,50 @@ class Librecap {
 		popup.style.visibility = 'visible'
 		popup.classList.add('active')
 
-		const handleResize = () => {
+		this._resizeHandler = () => {
 			if (popup && popup.isConnected) {
 				this.positionPopup(popup, container)
 			} else {
-				window.removeEventListener('resize', handleResize)
+				this.cleanup()
 			}
 		}
-		window.addEventListener('resize', handleResize)
+		window.addEventListener('resize', this._resizeHandler)
 
 		return popup
 	}
 
+	handleVerification(container, popup) {
+		try {
+			if (this.currentPowChallenge && this.currentImageChallenge) {
+				const selectedImagesData = this.selectedImagesPerChallenge.map((set, index) => ({
+					challenge: index + 1,
+					selectedIndexes: Array.from(set)
+				}))
+
+				console.log('Verification data:', {
+					powChallenge: this.currentPowChallenge,
+					imageChallenge: this.currentImageChallenge,
+					selectedImages: selectedImagesData
+				})
+			}
+
+			popup.classList.remove('active')
+			this.selectedImagesPerChallenge = []
+			this.currentChallengeIndex = 0
+
+			const checkbox = container.querySelector('.captcha-checkbox')
+			if (checkbox) {
+				checkbox.checked = true
+			}
+		} catch (error) {
+			console.error('Verification error:', error)
+			this.showError(container, 'Failed to verify challenge')
+		}
+	}
+
 	createInfoView(popup) {
 		const icons = this.createSVGIcons()
-		const brandingInfo = popup.brandingInfo
-
-		const encodeHTML = (str) => {
-			return str.replace(/[&<>"']/g, (match) => {
-				const escape = {
-					'&': '&amp;',
-					'<': '&lt;',
-					'>': '&gt;',
-					'"': '&quot;',
-					"'": '&#39;'
-				}
-				return escape[match]
-			})
-		}
-
-		const isValidUrl = (string) => {
-			try {
-				new URL(string)
-				return true
-			} catch (_) {
-				return false
-			}
-		}
+		const config = popup.config
 
 		const infoContent = document.createElement('div')
 		infoContent.className = 'info-content'
@@ -524,56 +590,69 @@ class Librecap {
 		const mainContent = document.createElement('div')
 		mainContent.className = 'info-main-content'
 
-		const logoContainer = document.createElement('div')
-		logoContainer.className = 'info-logo-container'
+		if (config.logo !== undefined || config.title !== undefined) {
+			const logoContainer = document.createElement('div')
+			logoContainer.className = 'info-logo-container'
 
-		const brandWrapper = isValidUrl(brandingInfo.url)
-			? document.createElement('a')
-			: document.createElement('div')
+			const brandWrapper =
+				config.url !== undefined
+					? document.createElement('a')
+					: document.createElement('div')
 
-		if (isValidUrl(brandingInfo.url)) {
-			brandWrapper.href = encodeURI(brandingInfo.url)
-			brandWrapper.target = '_blank'
-			brandWrapper.rel = 'noopener noreferrer'
-			brandWrapper.className = 'brand-wrapper'
+			if (config.url !== undefined) {
+				brandWrapper.href = encodeURI(config.url)
+				brandWrapper.target = '_blank'
+				brandWrapper.rel = 'noopener noreferrer'
+				brandWrapper.className = 'brand-wrapper'
+			}
+
+			if (config.logo !== undefined) {
+				const logo = document.createElement('img')
+				logo.className = 'info-logo'
+				logo.src = encodeURI(config.logo)
+				if (config.title !== undefined) {
+					logo.alt = config.title
+				}
+				brandWrapper.appendChild(logo)
+			}
+
+			if (config.title !== undefined) {
+				const brandTitleEl = document.createElement('div')
+				brandTitleEl.className = 'info-brand-title'
+				brandTitleEl.textContent = config.title
+				brandWrapper.appendChild(brandTitleEl)
+			}
+
+			logoContainer.appendChild(brandWrapper)
+			mainContent.appendChild(logoContainer)
 		}
 
-		const logo = document.createElement('img')
-		logo.className = 'info-logo'
-		logo.src = encodeURI(brandingInfo.logo)
-		logo.alt = encodeHTML(brandingInfo.title)
+		if (config.description !== undefined) {
+			const infoText = document.createElement('div')
+			infoText.className = 'info-text'
+			infoText.textContent = config.description
+			mainContent.appendChild(infoText)
+		}
 
-		const brandTitleEl = document.createElement('div')
-		brandTitleEl.className = 'info-brand-title'
-		brandTitleEl.textContent = encodeHTML(brandingInfo.title)
-
-		brandWrapper.appendChild(logo)
-		brandWrapper.appendChild(brandTitleEl)
-		logoContainer.appendChild(brandWrapper)
-
-		const infoText = document.createElement('div')
-		infoText.className = 'info-text'
-		infoText.textContent = encodeHTML(brandingInfo.description)
-
-		const githubContainer = document.createElement('div')
-		githubContainer.className = 'github-container'
-
-		if (brandingInfo.githubUrl && isValidUrl(brandingInfo.githubUrl)) {
+		if (config.githubUrl !== undefined) {
+			const githubContainer = document.createElement('div')
+			githubContainer.className = 'github-container'
 			const githubButton = document.createElement('a')
-			githubButton.href = encodeURI(brandingInfo.githubUrl)
+			githubButton.href = encodeURI(config.githubUrl)
 			githubButton.target = '_blank'
 			githubButton.rel = 'noopener noreferrer'
 			githubButton.className = 'github-button'
 			githubButton.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg> View Source on GitHub`
 			githubContainer.appendChild(githubButton)
+			mainContent.appendChild(githubContainer)
 		}
 
 		const infoLinks = document.createElement('div')
 		infoLinks.className = 'info-links'
 
-		if (isValidUrl(brandingInfo.termsUrl)) {
+		if (config.termsUrl !== undefined) {
 			const termsLink = document.createElement('a')
-			termsLink.href = encodeURI(brandingInfo.termsUrl)
+			termsLink.href = encodeURI(config.termsUrl)
 			termsLink.className = 'info-link'
 			termsLink.target = '_blank'
 			termsLink.rel = 'noopener noreferrer'
@@ -581,9 +660,9 @@ class Librecap {
 			infoLinks.appendChild(termsLink)
 		}
 
-		if (isValidUrl(brandingInfo.privacyUrl)) {
+		if (config.privacyUrl !== undefined) {
 			const privacyLink = document.createElement('a')
-			privacyLink.href = encodeURI(brandingInfo.privacyUrl)
+			privacyLink.href = encodeURI(config.privacyUrl)
 			privacyLink.className = 'info-link'
 			privacyLink.target = '_blank'
 			privacyLink.rel = 'noopener noreferrer'
@@ -591,11 +670,6 @@ class Librecap {
 			infoLinks.appendChild(privacyLink)
 		}
 
-		mainContent.appendChild(logoContainer)
-		mainContent.appendChild(infoText)
-		if (githubContainer.hasChildNodes()) {
-			mainContent.appendChild(githubContainer)
-		}
 		if (infoLinks.hasChildNodes()) {
 			mainContent.appendChild(infoLinks)
 		}

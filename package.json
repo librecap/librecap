@@ -1,6 +1,6 @@
 {
 	"name": "librecap",
-	"version": "0.2.14",
+	"version": "0.2.15",
 	"description": "An open-source CAPTCHA Box alternative designed with privacy and data protection in mind.",
 	"main": "dist/librecap.js",
 	"jsdelivr": "dist/librecap.js",
@@ -12,7 +12,10 @@
 	"scripts": {
 		"build": "node build.js",
 		"format": "prettier --write \"./**/*.{js,jsx,ts,tsx,json,css,scss,md,html}\"",
-		"demo": "node build.js && node serve-demo.js"
+		"demo": "node build.js && node serve-demo.js",
+		"lint": "eslint . --ext .js,.jsx,.ts,.tsx && stylelint --config .stylelintrc.mjs \"**/*.css\"",
+		"lint:js": "eslint . --ext .js,.jsx,.ts,.tsx",
+		"lint:css": "stylelint --config .stylelintrc.mjs \"**/*.css\""
 	},
 	"keywords": [],
 	"author": "",
@@ -20,8 +23,15 @@
 	"devDependencies": {
 		"cssnano": "^7.0.6",
 		"eslint": "^9.21.0",
+		"globals": "^13.24.0",
 		"postcss": "^8.5.3",
 		"prettier": "^3.5.2",
-		"uglify-js": "^3.19.3"
+		"uglify-js": "^3.19.3",
+		"stylelint": "^16.2.1",
+		"stylelint-config-standard": "^36.0.0"
+	},
+	"dependencies": {
+		"express": "^4.19.2",
+		"cors": "^2.8.5"
 	}
 }
