@@ -30,8 +30,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.16/dist/librecap-min.js"
-	integrity="sha512-mtVhpOzkQFB4+Q/dUE1vvQP51Jl6MTuUhsdvml5or8jb1RuJSs9x2r2kQDSTWYSZLVUm68gIf2dSib74lbDh4A=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.17/dist/librecap-min.js"
+	integrity="sha512-K8HFY1K1fkbgGs1Zx7m/Mp8U0Bdp7C/PF1PWy2VY8Pctkczx2BfcYh9o83ATTt5Pns7K+Pa/gCDNnz9mCrvnMA=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -82,14 +82,31 @@ LibreCap offers a privacy-friendly CAPTCHA solution that respects your users' da
 
 ## 📦 Installation
 
+### Run the demo server (Recommended for testing)
+
+```bash
+git clone https://github.com/librecap/librecap.git
+cd librecap
+npm install
+npm run demo
+```
+
 ### Using CDN (Recommended)
+
+Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.16/dist/librecap-min.js"
-	integrity="sha512-mtVhpOzkQFB4+Q/dUE1vvQP51Jl6MTuUhsdvml5or8jb1RuJSs9x2r2kQDSTWYSZLVUm68gIf2dSib74lbDh4A=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.2.17/dist/librecap-min.js"
+	integrity="sha512-K8HFY1K1fkbgGs1Zx7m/Mp8U0Bdp7C/PF1PWy2VY8Pctkczx2BfcYh9o83ATTt5Pns7K+Pa/gCDNnz9mCrvnMA=="
 	crossorigin="anonymous"
 ></script>
+```
+
+Add a CAPTCHA box to your website by inserting this div wherever you need verification:
+
+```html
+<div class="librecap"></div>
 ```
 
 ### Using npm

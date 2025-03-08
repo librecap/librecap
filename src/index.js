@@ -445,6 +445,13 @@ class Librecap {
 				action: () => {
 					const button = controls.children[0]
 					button.classList.add('loading', 'force-background')
+
+					const overlay = this.activePopup.querySelector('.progress-overlay')
+					const overlayText = overlay.querySelector('.progress-overlay-text')
+					const overlayFill = overlay.querySelector('.progress-overlay-fill')
+					overlayText.textContent = '0 done'
+					overlayFill.style.width = '0%'
+
 					this.newImageChallenge(container, config).finally(() => {
 						button.classList.remove('loading', 'force-background')
 					})
@@ -482,10 +489,52 @@ class Librecap {
 			.fill()
 			.map(() => new Set())
 
-		const progressIndicator = document.createElement('div')
-		progressIndicator.className = 'challenge-progress'
-		progressIndicator.textContent = `Challenge ${this.currentChallengeIndex + 1} of ${this.totalChallenges}`
-		header.appendChild(progressIndicator)
+		const progressOverlay = document.createElement('div')
+		progressOverlay.className = 'progress-overlay'
+
+		const progressContent = document.createElement('div')
+		progressContent.className = 'progress-overlay-content'
+
+		const progressText = document.createElement('div')
+		progressText.className = 'progress-overlay-text'
+		progressText.textContent = '0 done'
+
+		const progressBar = document.createElement('div')
+		progressBar.className = 'progress-overlay-bar'
+
+		const progressFill = document.createElement('div')
+		progressFill.className = 'progress-overlay-fill'
+		progressFill.style.width = '0%'
+
+		progressBar.appendChild(progressFill)
+		progressContent.appendChild(progressText)
+		progressContent.appendChild(progressBar)
+		progressOverlay.appendChild(progressContent)
+
+		if (config.logo !== undefined || config.title !== undefined) {
+			const brandSection = document.createElement('div')
+			brandSection.className = 'progress-overlay-brand'
+
+			if (config.logo !== undefined) {
+				const brandLogo = document.createElement('img')
+				brandLogo.src = config.logo
+				if (config.title !== undefined) {
+					brandLogo.alt = config.title
+				}
+				brandSection.appendChild(brandLogo)
+			}
+
+			if (config.title !== undefined) {
+				const brandTitle = document.createElement('div')
+				brandTitle.className = 'progress-overlay-brand-title'
+				brandTitle.textContent = config.title
+				brandSection.appendChild(brandTitle)
+			}
+
+			progressOverlay.appendChild(brandSection)
+		}
+
+		popup.appendChild(progressOverlay)
 
 		const grid = document.createElement('div')
 		grid.className = 'challenge-grid'
@@ -499,11 +548,29 @@ class Librecap {
 		challengeView.appendChild(verifyButton)
 
 		verifyButton.addEventListener('click', () => {
+			const overlay = this.activePopup.querySelector('.progress-overlay')
+			const overlayText = overlay.querySelector('.progress-overlay-text')
+			const overlayFill = overlay.querySelector('.progress-overlay-fill')
+
+			overlay.classList.add('active')
+
 			if (this.currentChallengeIndex < this.totalChallenges - 1) {
-				this.currentChallengeIndex++
-				this.updateGrid(grid, imageChallenge, this.currentChallengeIndex, verifyButton)
+				overlayText.textContent = `${this.currentChallengeIndex + 1} done`
+				const progress = ((this.currentChallengeIndex + 1) / this.totalChallenges) * 100
+				overlayFill.style.width = `${progress}%`
+
+				setTimeout(() => {
+					overlay.classList.remove('active')
+					this.currentChallengeIndex++
+					this.updateGrid(grid, imageChallenge, this.currentChallengeIndex, verifyButton)
+				}, 1000)
 			} else {
-				this.handleVerification(container, popup)
+				overlayText.textContent = `${this.totalChallenges} done`
+				overlayFill.style.width = '100%'
+
+				setTimeout(() => {
+					this.handleVerification(container, popup)
+				}, 1000)
 			}
 		})
 
