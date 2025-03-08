@@ -282,8 +282,8 @@ class Librecap {
 			logo: getAttr('data-brand-logo'),
 			url: getAttr('data-brand-url'),
 			githubUrl: getAttr('data-brand-github'),
-			termsUrl: getAttr('data-terms'),
-			privacyUrl: getAttr('data-privacy')
+			termsUrl: getAttr('data-brand-terms'),
+			privacyUrl: getAttr('data-brand-privacy')
 		})
 
 		const errorSection = document.createElement('div')
