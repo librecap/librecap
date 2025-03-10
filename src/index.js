@@ -1,5 +1,6 @@
 import { solve_pow_challenge, initialRequest, challengeRequest } from './challenge'
 
+import './fonts.css'
 import './popup.css'
 import './widget.css'
 
@@ -90,6 +91,7 @@ class Librecap {
 		this.activeOverlay = null
 		this.activeInfoPage = null
 		this.currentView = 'challenge'
+		this.previousView = null
 		this.currentPowChallenge = null
 		this.currentImageChallenge = null
 		this.currentChallengeIndex = 0
@@ -398,6 +400,7 @@ class Librecap {
 		return {
 			reload: `<svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`,
 			sound: `<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`,
+			image: `<svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`,
 			info: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`,
 			close: `<svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`,
 			back: `<svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>`
@@ -457,7 +460,11 @@ class Librecap {
 					})
 				}
 			},
-			{ icon: icons.sound, title: 'Sound challenge' },
+			{
+				icon: icons.sound,
+				title: 'Sound challenge',
+				action: () => this.showSoundChallengeView(popup)
+			},
 			{ icon: icons.info, title: 'Information', action: () => this.showInfoView(popup) }
 		]
 
@@ -649,7 +656,11 @@ class Librecap {
 		backButton.className = 'back-button'
 		backButton.innerHTML = `${icons.back} Back to challenge`
 		backButton.addEventListener('click', () => {
-			this.showChallengeView(popup)
+			if (this.previousView === 'sound-challenge') {
+				this.showSoundChallengeView(popup)
+			} else {
+				this.showChallengeView(popup)
+			}
 		})
 
 		infoHeader.appendChild(backButton)
@@ -748,21 +759,159 @@ class Librecap {
 	}
 
 	showInfoView(popup) {
-		const challengeView = popup.querySelector('.challenge-view')
+		const mainChallengeView = popup.querySelector('.challenge-view:not(.sound-challenge-view)')
 		const infoContent = popup.querySelector('.info-content')
+		const soundChallengeView = popup.querySelector('.sound-challenge-view')
 
-		challengeView.style.display = 'none'
+		this.previousView = this.currentView
+
+		if (mainChallengeView) {
+			mainChallengeView.style.display = 'none'
+		}
+		if (soundChallengeView) {
+			soundChallengeView.style.display = 'none'
+		}
 		infoContent.style.display = 'flex'
 		this.currentView = 'info'
 	}
 
-	showChallengeView(popup) {
-		const challengeView = popup.querySelector('.challenge-view')
+	showSoundChallengeView(popup) {
+		if (!popup.querySelector('.sound-challenge-view')) {
+			const soundChallengeView = this.createSoundChallengeView(popup)
+			soundChallengeView.classList.add('sound-challenge-view')
+			popup.appendChild(soundChallengeView)
+		}
+
+		const mainChallengeView = popup.querySelector('.challenge-view:not(.sound-challenge-view)')
 		const infoContent = popup.querySelector('.info-content')
+		const soundChallengeView = popup.querySelector('.sound-challenge-view')
+
+		if (mainChallengeView) {
+			mainChallengeView.style.display = 'none'
+		}
+		infoContent.style.display = 'none'
+		soundChallengeView.style.display = 'block'
+		this.currentView = 'sound-challenge'
+	}
+
+	showChallengeView(popup) {
+		const mainChallengeView = popup.querySelector('.challenge-view:not(.sound-challenge-view)')
+		const infoContent = popup.querySelector('.info-content')
+		const soundChallengeView = popup.querySelector('.sound-challenge-view')
 
 		infoContent.style.display = 'none'
-		challengeView.style.display = 'block'
+		if (soundChallengeView) {
+			soundChallengeView.style.display = 'none'
+		}
+		if (mainChallengeView) {
+			mainChallengeView.style.display = 'block'
+		}
 		this.currentView = 'challenge'
+	}
+
+	createSoundChallengeView(popup) {
+		const icons = this.createSVGIcons()
+
+		const soundChallengeView = document.createElement('div')
+		soundChallengeView.className = 'challenge-view'
+
+		if (popup.hasAttribute('data-theme')) {
+			const theme = popup.getAttribute('data-theme')
+			soundChallengeView.setAttribute('data-theme', theme)
+		}
+
+		const exampleSection = document.createElement('div')
+		exampleSection.className = 'challenge-example'
+
+		const header = document.createElement('div')
+		header.className = 'challenge-header'
+
+		const title = document.createElement('div')
+		title.className = 'challenge-title'
+		title.innerText = 'Enter the characters you hear.'
+
+		const controls = document.createElement('div')
+		controls.className = 'challenge-controls'
+
+		const buttons = [
+			{
+				icon: icons.reload,
+				title: 'New challenge',
+				action: () => {
+					const button = controls.children[0]
+					button.classList.add('loading', 'force-background')
+
+					setTimeout(() => {
+						button.classList.remove('loading', 'force-background')
+					}, 1000)
+				}
+			},
+			{
+				icon: icons.image,
+				title: 'Image challenge',
+				action: () => this.showChallengeView(popup)
+			},
+			{ icon: icons.info, title: 'Information', action: () => this.showInfoView(popup) }
+		]
+
+		buttons.forEach(({ icon, title, action }) => {
+			const button = document.createElement('button')
+			button.className = 'challenge-button'
+			button.title = title
+			button.innerHTML = icon
+			if (action) {
+				button.addEventListener('click', action)
+			}
+			controls.appendChild(button)
+		})
+
+		header.appendChild(title)
+		header.appendChild(controls)
+		exampleSection.appendChild(header)
+		soundChallengeView.appendChild(exampleSection)
+
+		const soundChallengeContainer = document.createElement('div')
+		soundChallengeContainer.className = 'sound-challenge-container'
+
+		const audioContainer = document.createElement('div')
+		audioContainer.className = 'audio-container'
+
+		const audioPlayer = document.createElement('audio')
+		audioPlayer.controls = true
+		audioPlayer.className = 'audio-player'
+
+		audioContainer.appendChild(audioPlayer)
+		soundChallengeContainer.appendChild(audioContainer)
+
+		const inputContainer = document.createElement('div')
+		inputContainer.className = 'sound-input-container'
+
+		const inputField = document.createElement('input')
+		inputField.type = 'text'
+		inputField.className = 'sound-input-field'
+		inputField.placeholder = 'Type the characters you hear'
+		inputField.setAttribute('aria-label', 'Type the characters you hear')
+
+		inputContainer.appendChild(inputField)
+		soundChallengeContainer.appendChild(inputContainer)
+		soundChallengeView.appendChild(soundChallengeContainer)
+
+		const verifyButton = document.createElement('button')
+		verifyButton.className = 'verify-button'
+		verifyButton.textContent = 'Verify'
+		verifyButton.disabled = true
+
+		inputField.addEventListener('input', () => {
+			verifyButton.disabled = inputField.value.trim() === ''
+		})
+
+		verifyButton.addEventListener('click', () => {
+			alert('Sound verification would happen here')
+		})
+
+		soundChallengeView.appendChild(verifyButton)
+
+		return soundChallengeView
 	}
 
 	positionPopup(popup, container) {

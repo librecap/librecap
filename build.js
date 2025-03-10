@@ -55,16 +55,47 @@ function extractJsImports(filePath) {
 
 	while ((match = importRegex.exec(content))) {
 		const importPath = match[1]
-		if (!importPath.endsWith('.css')) {
-			imports.add(importPath)
-		}
+		imports.add(importPath)
 	}
 
 	return Array.from(imports)
 }
 
+function extractCssImports(filePath, visitedFiles = new Set()) {
+	if (visitedFiles.has(filePath)) {
+		return []
+	}
+	visitedFiles.add(filePath)
+
+	const content = fs.readFileSync(filePath, 'utf8')
+	const directCssImports = []
+
+	const cssImportRegex = /import\s+['"]\.\/([^'"]+\.css)['"];?/g
+	let match
+	while ((match = cssImportRegex.exec(content))) {
+		directCssImports.push(match[1])
+	}
+
+	const jsImports = extractJsImports(filePath)
+	const allCssImports = [...directCssImports]
+
+	for (const importFile of jsImports) {
+		if (!importFile.endsWith('.css')) {
+			const importPath = path.resolve(path.dirname(filePath), importFile + '.js')
+			if (fs.existsSync(importPath)) {
+				const nestedCssImports = extractCssImports(importPath, visitedFiles)
+				allCssImports.push(...nestedCssImports)
+			}
+		}
+	}
+
+	return allCssImports
+}
+
 function processImportedJsFiles(indexFilePath) {
-	const imports = extractJsImports(indexFilePath)
+	const imports = extractJsImports(indexFilePath).filter(
+		(importFile) => !importFile.endsWith('.css')
+	)
 	const importedCode = []
 	const processedFiles = new Set()
 
@@ -99,12 +130,18 @@ function processImportedJsFiles(indexFilePath) {
 async function build() {
 	console.log('Building librecap.js and librecap-min.js...')
 
-	const popupCssVar = await processCssFile(path.resolve(__dirname, 'src/popup.css'), 'POPUP_CSS')
+	const indexJsPath = path.resolve(__dirname, 'src/index.js')
 
-	const widgetCssVar = await processCssFile(
-		path.resolve(__dirname, 'src/widget.css'),
-		'WIDGET_CSS'
-	)
+	const cssImports = extractCssImports(indexJsPath)
+	const uniqueCssImports = [...new Set(cssImports)]
+
+	const cssVariables = []
+	for (const cssFile of uniqueCssImports) {
+		const cssPath = path.resolve(__dirname, 'src', cssFile)
+		const varName = `${path.basename(cssFile, '.css').toUpperCase()}_CSS`
+		const cssVar = await processCssFile(cssPath, varName)
+		cssVariables.push(cssVar)
+	}
 
 	const workerContent = fs.readFileSync(path.resolve(__dirname, 'src/pow_worker.js'), 'utf8')
 	const minifiedWorker = UglifyJS.minify(workerContent, {
@@ -126,8 +163,6 @@ function injectCSS(...cssStrings) {
   document.head.appendChild(style);
 }`
 
-	const indexJsPath = path.resolve(__dirname, 'src/index.js')
-
 	let importedJsCode = processImportedJsFiles(indexJsPath)
 
 	importedJsCode = importedJsCode.replace(
@@ -137,17 +172,19 @@ function injectCSS(...cssStrings) {
 
 	const indexJsContent = processJsFile(indexJsPath)
 
+	const cssVarNames = uniqueCssImports
+		.map((file) => `${path.basename(file, '.css').toUpperCase()}_CSS`)
+		.join(', ')
+
 	const modifiedIndexJs = indexJsContent.replace(
 		/constructor\(\) {/,
 		`constructor() {
-    // Inject CSS into a single style element
-    injectCSS(POPUP_CSS, WIDGET_CSS);`
+    injectCSS(${cssVarNames});`
 	)
 
 	const combinedCode = [
 		'(function(global) {',
-		popupCssVar,
-		widgetCssVar,
+		...cssVariables,
 		injectCssFunc,
 		importedJsCode,
 		modifiedIndexJs,
