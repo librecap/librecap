@@ -51,13 +51,26 @@ class PowChallenge {
 	}
 }
 
-class ImageCaptchaChallenge {
-	constructor(nonce, timestamp, signature, indicesHash, images) {
+class CaptchaChallenge {
+	constructor(nonce, timestamp, signature, indicesHash) {
 		this.nonce = nonce
 		this.timestamp = timestamp
 		this.signature = signature
 		this.indicesHash = indicesHash
+	}
+}
+
+class ImageCaptchaChallenge extends CaptchaChallenge {
+	constructor(nonce, timestamp, signature, indicesHash, images) {
+		super(nonce, timestamp, signature, indicesHash)
 		this.images = images
+	}
+}
+
+class AudioCaptchaChallenge extends CaptchaChallenge {
+	constructor(nonce, timestamp, signature, indicesHash, audios) {
+		super(nonce, timestamp, signature, indicesHash)
+		this.audios = audios
 	}
 }
 
@@ -133,6 +146,24 @@ function parseImageCaptchaChallengesBuffer(buffer) {
 	}
 }
 
+function parseAudioCaptchaChallengesBuffer(buffer) {
+	try {
+		const data = new Uint8Array(buffer)
+
+		const nonce = data.slice(0, 16)
+		const timestamp = data.slice(16, 24)
+		const signature = data.slice(24, 56)
+		const indicesHash = data.slice(56, 88)
+		const audioData = data.slice(88)
+		const audios = [audioData]
+
+		return new AudioCaptchaChallenge(nonce, timestamp, signature, indicesHash, audios)
+	} catch (error) {
+		console.error('Error parsing audio captcha challenges buffer:', error)
+		return null
+	}
+}
+
 function generatePowSolutionBuffer(pow_challenge, solution) {
 	try {
 		const buffer = new Uint8Array(65)
@@ -196,6 +227,37 @@ export async function challengeRequest(url, siteKey, challenge, solution) {
 
 	const bufferData = await response.arrayBuffer()
 	const challenges = parseImageCaptchaChallengesBuffer(bufferData)
+
+	return challenges
+}
+
+export async function audioChallengeRequest(url, language, siteKey, challenge, solution) {
+	const powSolutionBuffer = generatePowSolutionBuffer(challenge, solution)
+
+	if (!powSolutionBuffer) {
+		throw new Error('Error generating POW solution buffer')
+	}
+
+	const headers = siteKey
+		? { 'Content-Type': 'application/octet-stream', 'Librecap-Site-Key': siteKey }
+		: { 'Content-Type': 'application/octet-stream' }
+
+	if (language !== null) {
+		headers['Librecap-Language'] = language
+	}
+
+	const response = await fetch(url + '/audio_challenge', {
+		method: 'POST',
+		headers,
+		body: powSolutionBuffer
+	})
+
+	if (!response.ok) {
+		throw new Error(`Server returned ${response.status}: ${response.statusText}`)
+	}
+
+	const bufferData = await response.arrayBuffer()
+	const challenges = parseAudioCaptchaChallengesBuffer(bufferData)
 
 	return challenges
 }

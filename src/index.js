@@ -1,4 +1,4 @@
-import { solve_pow_challenge, initialRequest, challengeRequest } from './challenge'
+import { solve_pow_challenge, initialRequest, challengeRequest, audioChallengeRequest } from './challenge'
 
 import './fonts.css'
 import './popup.css'
@@ -92,11 +92,21 @@ class Librecap {
 		this.activeInfoPage = null
 		this.currentView = 'challenge'
 		this.previousView = null
-		this.currentPowChallenge = null
+		
+		// Image challenge state
+		this.currentImagePowChallenge = null
 		this.currentImageChallenge = null
-		this.currentChallengeIndex = 0
-		this.totalChallenges = 1
+		this.currentImageChallengeIndex = 0
+		this.totalImageChallenges = 1
 		this.selectedImagesPerChallenge = []
+
+		// Audio challenge state
+		this.currentAudioPowChallenge = null
+		this.currentAudioChallenge = null
+		this.currentAudioChallengeIndex = 0
+		this.totalAudioChallenges = 1
+		this.currentAudioInput = ''
+
 		this._resizeHandler = null
 	}
 
@@ -114,7 +124,7 @@ class Librecap {
 
 	updateVerifyButton(button, challengeIndex) {
 		if (!button) return
-		const isLastChallenge = challengeIndex === this.totalChallenges - 1
+		const isLastChallenge = challengeIndex === this.totalImageChallenges - 1
 		button.disabled = this.selectedImagesPerChallenge[challengeIndex]?.size === 0
 		button.textContent = isLastChallenge ? 'VERIFY' : 'NEXT'
 	}
@@ -159,13 +169,13 @@ class Librecap {
 				powSolution
 			)
 
-			this.currentPowChallenge = powChallenges.second
+			this.currentImagePowChallenge = powChallenges.second
 			this.currentImageChallenge = imageChallenge
 			this.selectedImages.clear()
 
-			this.currentChallengeIndex = 0
-			this.totalChallenges = Math.floor((imageChallenge.images.length - 1) / 9)
-			this.selectedImagesPerChallenge = Array(this.totalChallenges)
+			this.currentImageChallengeIndex = 0
+			this.totalImageChallenges = Math.floor((imageChallenge.images.length - 1) / 9)
+			this.selectedImagesPerChallenge = Array(this.totalImageChallenges)
 				.fill()
 				.map(() => new Set())
 
@@ -181,10 +191,45 @@ class Librecap {
 		}
 	}
 
+	async newAudioChallenge(container, config, language = null) {
+		try {
+			const powChallenges = await initialRequest(config.apiEndpoint, config.siteKey)
+			const powSolution = await solve_pow_challenge(powChallenges.first)
+			const audioChallenge = await audioChallengeRequest(
+				config.apiEndpoint,
+				language,
+				config.siteKey,
+				powChallenges.first,
+				powSolution
+			)
+
+			this.currentAudioPowChallenge = powChallenges.second
+			this.currentAudioChallenge = audioChallenge
+			this.currentAudioChallengeIndex = 0
+			this.totalAudioChallenges = audioChallenge.audios.length
+			this.currentAudioInput = ''
+
+			console.log('Audio challenge:', {
+				powChallenge: this.currentAudioPowChallenge,
+				audioChallenge: this.currentAudioChallenge
+			})
+
+			if (this.activePopup) {
+				this.updateExistingAudioPopup(audioChallenge)
+			} else {
+				this.createChallengePopup(container, audioChallenge, config)
+			}
+		} catch (error) {
+			console.error('Audio challenge error:', error)
+			this.showError(container, error.message || 'Failed to load audio challenge')
+			container.classList.remove('loading')
+		}
+	}
+
 	updateExistingPopup(imageChallenge) {
 		const progressIndicator = this.activePopup.querySelector('.challenge-progress')
 		if (progressIndicator) {
-			progressIndicator.textContent = `Challenge ${this.currentChallengeIndex + 1} of ${this.totalChallenges}`
+			progressIndicator.textContent = `Challenge ${this.currentImageChallengeIndex + 1} of ${this.totalImageChallenges}`
 		}
 
 		const exampleImage = this.activePopup.querySelector('.example-image img')
@@ -197,6 +242,36 @@ class Librecap {
 		const verifyButton = this.activePopup.querySelector('.verify-button')
 		if (grid && verifyButton) {
 			this.updateGrid(grid, imageChallenge, 0, verifyButton)
+		}
+
+		if (this.currentView === 'info') {
+			this.showChallengeView(this.activePopup)
+		}
+	}
+
+	updateExistingAudioPopup(audioChallenge) {
+		const audioPlayer = this.activePopup.querySelector('.audio-player')
+		if (audioPlayer) {
+			const blob = new Blob([audioChallenge.audios[this.currentAudioChallengeIndex]], { type: 'audio/mp3' })
+			const url = URL.createObjectURL(blob)
+			audioPlayer.src = url
+			audioPlayer.onload = () => URL.revokeObjectURL(url)
+		}
+
+		const progressIndicator = this.activePopup.querySelector('.challenge-progress')
+		if (progressIndicator) {
+			progressIndicator.textContent = `Challenge ${this.currentAudioChallengeIndex + 1} of ${this.totalAudioChallenges}`
+		}
+
+		const verifyButton = this.activePopup.querySelector('.verify-button')
+		if (verifyButton) {
+			verifyButton.disabled = true
+			verifyButton.textContent = this.currentAudioChallengeIndex < this.totalAudioChallenges - 1 ? 'NEXT' : 'VERIFY'
+		}
+
+		const inputField = this.activePopup.querySelector('.sound-input-field')
+		if (inputField) {
+			inputField.value = this.currentAudioInput
 		}
 
 		if (this.currentView === 'info') {
@@ -245,7 +320,7 @@ class Librecap {
 
 		const progressIndicator = this.activePopup.querySelector('.challenge-progress')
 		if (progressIndicator) {
-			progressIndicator.textContent = `Challenge ${challengeIndex + 1} of ${this.totalChallenges}`
+			progressIndicator.textContent = `Challenge ${challengeIndex + 1} of ${this.totalImageChallenges}`
 		}
 	}
 
@@ -463,7 +538,15 @@ class Librecap {
 			{
 				icon: icons.sound,
 				title: 'Sound challenge',
-				action: () => this.showSoundChallengeView(popup)
+				action: () => {
+					const button = controls.children[1]
+					button.classList.add('loading', 'force-background')
+
+					this.newAudioChallenge(container, config).finally(() => {
+						button.classList.remove('loading', 'force-background')
+						this.showSoundChallengeView(popup)
+					})
+				}
 			},
 			{ icon: icons.info, title: 'Information', action: () => this.showInfoView(popup) }
 		]
@@ -841,9 +924,9 @@ class Librecap {
 					const button = controls.children[0]
 					button.classList.add('loading', 'force-background')
 
-					setTimeout(() => {
+					this.newAudioChallenge(popup.triggerContainer, popup.config).finally(() => {
 						button.classList.remove('loading', 'force-background')
-					}, 1000)
+					})
 				}
 			},
 			{
@@ -891,6 +974,12 @@ class Librecap {
 		inputField.className = 'sound-input-field'
 		inputField.placeholder = 'Type the characters you hear'
 		inputField.setAttribute('aria-label', 'Type the characters you hear')
+		inputField.value = this.currentAudioInput
+
+		inputField.addEventListener('input', (event) => {
+			this.currentAudioInput = event.target.value
+			verifyButton.disabled = this.currentAudioInput.trim() === ''
+		})
 
 		inputContainer.appendChild(inputField)
 		soundChallengeContainer.appendChild(inputContainer)
@@ -898,20 +987,64 @@ class Librecap {
 
 		const verifyButton = document.createElement('button')
 		verifyButton.className = 'verify-button'
-		verifyButton.textContent = 'Verify'
-		verifyButton.disabled = true
-
-		inputField.addEventListener('input', () => {
-			verifyButton.disabled = inputField.value.trim() === ''
-		})
+		verifyButton.textContent = this.currentAudioChallengeIndex < this.totalAudioChallenges - 1 ? 'NEXT' : 'VERIFY'
+		verifyButton.disabled = !this.currentAudioInput.trim()
 
 		verifyButton.addEventListener('click', () => {
-			alert('Sound verification would happen here')
+			const overlay = this.activePopup.querySelector('.progress-overlay')
+			const overlayText = overlay.querySelector('.progress-overlay-text')
+			const overlayFill = overlay.querySelector('.progress-overlay-fill')
+
+			overlay.classList.add('active')
+
+			if (this.currentAudioChallengeIndex < this.totalAudioChallenges - 1) {
+				overlayText.textContent = `${this.currentAudioChallengeIndex + 1} done`
+				const progress = ((this.currentAudioChallengeIndex + 1) / this.totalAudioChallenges) * 100
+				overlayFill.style.width = `${progress}%`
+
+				setTimeout(() => {
+					overlay.classList.remove('active')
+					this.currentAudioChallengeIndex++
+					this.currentAudioInput = ''
+					this.updateExistingAudioPopup(this.currentAudioChallenge)
+				}, 1000)
+			} else {
+				overlayText.textContent = `${this.totalAudioChallenges} done`
+				overlayFill.style.width = '100%'
+
+				setTimeout(() => {
+					this.handleAudioVerification(popup.triggerContainer, popup)
+				}, 1000)
+			}
 		})
 
 		soundChallengeView.appendChild(verifyButton)
 
 		return soundChallengeView
+	}
+
+	handleAudioVerification(container, popup) {
+		try {
+			if (this.currentAudioPowChallenge && this.currentAudioChallenge) {
+				console.log('Audio verification data:', {
+					powChallenge: this.currentAudioPowChallenge,
+					audioChallenge: this.currentAudioChallenge,
+					userInput: this.currentAudioInput
+				})
+			}
+
+			popup.classList.remove('active')
+			this.currentAudioInput = ''
+			this.currentAudioChallengeIndex = 0
+
+			const checkbox = container.querySelector('.captcha-checkbox')
+			if (checkbox) {
+				checkbox.checked = true
+			}
+		} catch (error) {
+			console.error('Audio verification error:', error)
+			this.showError(container, 'Failed to verify audio challenge')
+		}
 	}
 
 	positionPopup(popup, container) {
