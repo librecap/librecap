@@ -1,4 +1,9 @@
-import { solve_pow_challenge, initialRequest, challengeRequest, audioChallengeRequest } from './challenge'
+import {
+	solve_pow_challenge,
+	initialRequest,
+	challengeRequest,
+	audioChallengeRequest
+} from './challenge'
 
 import './fonts.css'
 import './popup.css'
@@ -92,7 +97,7 @@ class Librecap {
 		this.activeInfoPage = null
 		this.currentView = 'challenge'
 		this.previousView = null
-		
+
 		// Image challenge state
 		this.currentImagePowChallenge = null
 		this.currentImageChallenge = null
@@ -252,7 +257,9 @@ class Librecap {
 	updateExistingAudioPopup(audioChallenge) {
 		const audioPlayer = this.activePopup.querySelector('.audio-player')
 		if (audioPlayer) {
-			const blob = new Blob([audioChallenge.audios[this.currentAudioChallengeIndex]], { type: 'audio/mp3' })
+			const blob = new Blob([audioChallenge.audios[this.currentAudioChallengeIndex]], {
+				type: 'audio/mp3'
+			})
 			const url = URL.createObjectURL(blob)
 			audioPlayer.src = url
 			audioPlayer.onload = () => URL.revokeObjectURL(url)
@@ -266,7 +273,8 @@ class Librecap {
 		const verifyButton = this.activePopup.querySelector('.verify-button')
 		if (verifyButton) {
 			verifyButton.disabled = true
-			verifyButton.textContent = this.currentAudioChallengeIndex < this.totalAudioChallenges - 1 ? 'NEXT' : 'VERIFY'
+			verifyButton.textContent =
+				this.currentAudioChallengeIndex < this.totalAudioChallenges - 1 ? 'NEXT' : 'VERIFY'
 		}
 
 		const inputField = this.activePopup.querySelector('.sound-input-field')
@@ -987,7 +995,8 @@ class Librecap {
 
 		const verifyButton = document.createElement('button')
 		verifyButton.className = 'verify-button'
-		verifyButton.textContent = this.currentAudioChallengeIndex < this.totalAudioChallenges - 1 ? 'NEXT' : 'VERIFY'
+		verifyButton.textContent =
+			this.currentAudioChallengeIndex < this.totalAudioChallenges - 1 ? 'NEXT' : 'VERIFY'
 		verifyButton.disabled = !this.currentAudioInput.trim()
 
 		verifyButton.addEventListener('click', () => {
@@ -999,7 +1008,8 @@ class Librecap {
 
 			if (this.currentAudioChallengeIndex < this.totalAudioChallenges - 1) {
 				overlayText.textContent = `${this.currentAudioChallengeIndex + 1} done`
-				const progress = ((this.currentAudioChallengeIndex + 1) / this.totalAudioChallenges) * 100
+				const progress =
+					((this.currentAudioChallengeIndex + 1) / this.totalAudioChallenges) * 100
 				overlayFill.style.width = `${progress}%`
 
 				setTimeout(() => {

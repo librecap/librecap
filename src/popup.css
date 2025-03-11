@@ -164,7 +164,7 @@
 	.libre-captcha-popup[data-theme='auto'] .info-link {
 		color: #aaaaaa;
 	}
-	
+
 	.libre-captcha-popup[data-theme='auto'] .info-link:after {
 		background: linear-gradient(
 			to right,
