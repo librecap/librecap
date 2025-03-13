@@ -13,6 +13,7 @@ class CaptchaConfig {
 	constructor({
 		siteKey,
 		apiEndpoint,
+		language,
 		title,
 		description,
 		logo,
@@ -34,6 +35,17 @@ class CaptchaConfig {
 
 		this.siteKey = siteKey
 		this.apiEndpoint = apiEndpoint
+
+		if (
+			language &&
+			['en', 'es', 'fr', 'de', 'it', 'pt', 'zh-CN', 'ja', 'ko', 'ru', 'ar', 'hi'].includes(
+				language
+			)
+		) {
+			this.language = language
+		} else {
+			this.language = null
+		}
 
 		const htmlEscape = (str) => {
 			if (typeof str !== 'string') return str
@@ -98,14 +110,12 @@ class Librecap {
 		this.currentView = 'challenge'
 		this.previousView = null
 
-		// Image challenge state
 		this.currentImagePowChallenge = null
 		this.currentImageChallenge = null
 		this.currentImageChallengeIndex = 0
 		this.totalImageChallenges = 1
 		this.selectedImagesPerChallenge = []
 
-		// Audio challenge state
 		this.currentAudioPowChallenge = null
 		this.currentAudioChallenge = null
 		this.currentAudioChallengeIndex = 0
@@ -113,6 +123,7 @@ class Librecap {
 		this.currentAudioInput = ''
 
 		this._resizeHandler = null
+		console.warn('Librecap is currently in development and not ready for production use.')
 	}
 
 	createImageElement(imageBytes, onLoadCallback = null) {
@@ -140,6 +151,13 @@ class Librecap {
 			this._resizeHandler = null
 		}
 		if (this.activePopup) {
+			this.pauseAudioIfPlaying(this.activePopup)
+
+			const audioPlayer = this.activePopup.querySelector('.audio-player')
+			if (audioPlayer && audioPlayer.src && audioPlayer.src.startsWith('blob:')) {
+				URL.revokeObjectURL(audioPlayer.src)
+			}
+
 			this.activePopup.remove()
 			this.activePopup = null
 		}
@@ -196,13 +214,13 @@ class Librecap {
 		}
 	}
 
-	async newAudioChallenge(container, config, language = null) {
+	async newAudioChallenge(container, config) {
 		try {
 			const powChallenges = await initialRequest(config.apiEndpoint, config.siteKey)
 			const powSolution = await solve_pow_challenge(powChallenges.first)
 			const audioChallenge = await audioChallengeRequest(
 				config.apiEndpoint,
-				language,
+				config.language,
 				config.siteKey,
 				powChallenges.first,
 				powSolution
@@ -220,6 +238,11 @@ class Librecap {
 			})
 
 			if (this.activePopup) {
+				if (!this.activePopup.querySelector('.sound-challenge-view')) {
+					const soundChallengeView = this.createSoundChallengeView(this.activePopup)
+					soundChallengeView.classList.add('sound-challenge-view')
+					this.activePopup.appendChild(soundChallengeView)
+				}
 				this.updateExistingAudioPopup(audioChallenge)
 			} else {
 				this.createChallengePopup(container, audioChallenge, config)
@@ -256,13 +279,30 @@ class Librecap {
 
 	updateExistingAudioPopup(audioChallenge) {
 		const audioPlayer = this.activePopup.querySelector('.audio-player')
+
 		if (audioPlayer) {
+			if (audioPlayer.src && audioPlayer.src.startsWith('blob:')) {
+				URL.revokeObjectURL(audioPlayer.src)
+			}
+
 			const blob = new Blob([audioChallenge.audios[this.currentAudioChallengeIndex]], {
 				type: 'audio/mp3'
 			})
 			const url = URL.createObjectURL(blob)
 			audioPlayer.src = url
-			audioPlayer.onload = () => URL.revokeObjectURL(url)
+
+			audioPlayer.addEventListener(
+				'error',
+				() => {
+					console.error('Error loading audio')
+					URL.revokeObjectURL(url)
+				},
+				{ once: true }
+			)
+		} else {
+			console.warn(
+				'Audio player element not found. Sound challenge view may not be initialized.'
+			)
 		}
 
 		const progressIndicator = this.activePopup.querySelector('.challenge-progress')
@@ -339,6 +379,8 @@ class Librecap {
 		const theme = element.getAttribute('data-theme') || 'auto'
 		container.setAttribute('data-theme', theme)
 
+		const language = element.getAttribute('language') || null
+
 		const siteKey = element.getAttribute('data-sitekey') || null
 		let apiEndpoint = element.getAttribute('data-endpoint') || null
 
@@ -362,6 +404,7 @@ class Librecap {
 		const config = new CaptchaConfig({
 			siteKey,
 			apiEndpoint,
+			language,
 			title: getAttr('data-brand-title'),
 			description: getAttr('data-brand-description'),
 			logo: getAttr('data-brand-logo'),
@@ -490,7 +533,7 @@ class Librecap {
 		}
 	}
 
-	createChallengePopup(container, imageChallenge, config) {
+	createChallengePopup(container, challenge, config) {
 		const icons = this.createSVGIcons()
 
 		this.cleanup()
@@ -507,85 +550,95 @@ class Librecap {
 
 		this.activePopup = popup
 
+		const isAudioChallenge = challenge.audios && challenge.audios.length > 0
+		const isImageChallenge = challenge.images && challenge.images.length > 0
+
 		const challengeView = document.createElement('div')
 		challengeView.className = 'challenge-view'
 		challengeView.setAttribute('data-theme', theme)
 
-		const exampleSection = document.createElement('div')
-		exampleSection.className = 'challenge-example'
+		if (isImageChallenge) {
+			const exampleSection = document.createElement('div')
+			exampleSection.className = 'challenge-example'
 
-		const header = document.createElement('div')
-		header.className = 'challenge-header'
+			const header = document.createElement('div')
+			header.className = 'challenge-header'
 
-		const title = document.createElement('div')
-		title.className = 'challenge-title'
-		title.innerText = 'Select all images containing a dog with the same facial expression'
+			const title = document.createElement('div')
+			title.className = 'challenge-title'
+			title.innerText = 'Select all images containing a dog with the same facial expression'
 
-		const controls = document.createElement('div')
-		controls.className = 'challenge-controls'
+			const controls = document.createElement('div')
+			controls.className = 'challenge-controls'
 
-		const buttons = [
-			{
-				icon: icons.reload,
-				title: 'New challenge',
-				action: () => {
-					const button = controls.children[0]
-					button.classList.add('loading', 'force-background')
+			const buttons = [
+				{
+					icon: icons.reload,
+					title: 'New challenge',
+					action: () => {
+						const button = controls.children[0]
+						button.classList.add('loading', 'force-background')
 
-					const overlay = this.activePopup.querySelector('.progress-overlay')
-					const overlayText = overlay.querySelector('.progress-overlay-text')
-					const overlayFill = overlay.querySelector('.progress-overlay-fill')
-					overlayText.textContent = '0 done'
-					overlayFill.style.width = '0%'
+						const overlay = this.activePopup.querySelector('.progress-overlay')
+						const overlayText = overlay.querySelector('.progress-overlay-text')
+						const overlayFill = overlay.querySelector('.progress-overlay-fill')
+						overlayText.textContent = '0 done'
+						overlayFill.style.width = '0%'
 
-					this.newImageChallenge(container, config).finally(() => {
-						button.classList.remove('loading', 'force-background')
-					})
+						this.newImageChallenge(container, config).finally(() => {
+							button.classList.remove('loading', 'force-background')
+						})
+					}
+				},
+				{
+					icon: icons.sound,
+					title: 'Sound challenge',
+					action: () => {
+						const button = controls.children[1]
+						button.classList.add('loading', 'force-background')
+
+						if (this.currentAudioChallenge && this.currentAudioChallenge.audios) {
+							button.classList.remove('loading', 'force-background')
+							this.showSoundChallengeView(popup)
+						} else {
+							this.newAudioChallenge(container, config).finally(() => {
+								button.classList.remove('loading', 'force-background')
+								this.showSoundChallengeView(popup)
+							})
+						}
+					}
+				},
+				{ icon: icons.info, title: 'Information', action: () => this.showInfoView(popup) }
+			]
+
+			buttons.forEach(({ icon, title, action }) => {
+				const button = document.createElement('button')
+				button.className = 'challenge-button'
+				button.title = title
+				button.innerHTML = icon
+				if (action) {
+					button.addEventListener('click', action)
 				}
-			},
-			{
-				icon: icons.sound,
-				title: 'Sound challenge',
-				action: () => {
-					const button = controls.children[1]
-					button.classList.add('loading', 'force-background')
+				controls.appendChild(button)
+			})
 
-					this.newAudioChallenge(container, config).finally(() => {
-						button.classList.remove('loading', 'force-background')
-						this.showSoundChallengeView(popup)
-					})
-				}
-			},
-			{ icon: icons.info, title: 'Information', action: () => this.showInfoView(popup) }
-		]
+			const exampleImage = document.createElement('div')
+			exampleImage.className = 'example-image'
+			const exampleImg = this.createImageElement(challenge.images[0])
+			exampleImage.appendChild(exampleImg)
 
-		buttons.forEach(({ icon, title, action }) => {
-			const button = document.createElement('button')
-			button.className = 'challenge-button'
-			button.title = title
-			button.innerHTML = icon
-			if (action) {
-				button.addEventListener('click', action)
-			}
-			controls.appendChild(button)
-		})
+			header.appendChild(title)
+			header.appendChild(controls)
+			exampleSection.appendChild(header)
+			exampleSection.appendChild(exampleImage)
+			challengeView.appendChild(exampleSection)
 
-		const exampleImage = document.createElement('div')
-		exampleImage.className = 'example-image'
-		const exampleImg = this.createImageElement(imageChallenge.images[0])
-		exampleImage.appendChild(exampleImg)
-
-		header.appendChild(title)
-		header.appendChild(controls)
-		exampleSection.appendChild(header)
-		exampleSection.appendChild(exampleImage)
-		challengeView.appendChild(exampleSection)
-
-		this.totalChallenges = Math.floor((imageChallenge.images.length - 1) / 9)
-		this.currentChallengeIndex = 0
-		this.selectedImagesPerChallenge = Array(this.totalChallenges)
-			.fill()
-			.map(() => new Set())
+			this.totalImageChallenges = Math.floor((challenge.images.length - 1) / 9)
+			this.currentImageChallengeIndex = 0
+			this.selectedImagesPerChallenge = Array(this.totalImageChallenges)
+				.fill()
+				.map(() => new Set())
+		}
 
 		const progressOverlay = document.createElement('div')
 		progressOverlay.className = 'progress-overlay'
@@ -634,52 +687,68 @@ class Librecap {
 
 		popup.appendChild(progressOverlay)
 
-		const grid = document.createElement('div')
-		grid.className = 'challenge-grid'
-
-		const verifyButton = document.createElement('button')
-		verifyButton.className = 'verify-button'
-		verifyButton.disabled = true
-		verifyButton.textContent = this.totalChallenges > 1 ? 'NEXT' : 'VERIFY'
-
-		challengeView.appendChild(grid)
-		challengeView.appendChild(verifyButton)
-
-		verifyButton.addEventListener('click', () => {
-			const overlay = this.activePopup.querySelector('.progress-overlay')
-			const overlayText = overlay.querySelector('.progress-overlay-text')
-			const overlayFill = overlay.querySelector('.progress-overlay-fill')
-
-			overlay.classList.add('active')
-
-			if (this.currentChallengeIndex < this.totalChallenges - 1) {
-				overlayText.textContent = `${this.currentChallengeIndex + 1} done`
-				const progress = ((this.currentChallengeIndex + 1) / this.totalChallenges) * 100
-				overlayFill.style.width = `${progress}%`
-
-				setTimeout(() => {
-					overlay.classList.remove('active')
-					this.currentChallengeIndex++
-					this.updateGrid(grid, imageChallenge, this.currentChallengeIndex, verifyButton)
-				}, 1000)
-			} else {
-				overlayText.textContent = `${this.totalChallenges} done`
-				overlayFill.style.width = '100%'
-
-				setTimeout(() => {
-					this.handleVerification(container, popup)
-				}, 1000)
-			}
-		})
-
-		this.updateGrid(grid, imageChallenge, 0, verifyButton)
-
 		const infoView = this.createInfoView(popup)
-
-		popup.appendChild(challengeView)
 		popup.appendChild(infoView)
 
-		this.currentView = 'challenge'
+		if (isAudioChallenge) {
+			const soundChallengeView = this.createSoundChallengeView(popup)
+			soundChallengeView.classList.add('sound-challenge-view')
+			popup.appendChild(soundChallengeView)
+			this.currentView = 'sound-challenge'
+
+			setTimeout(() => {
+				this.updateExistingAudioPopup(challenge)
+			}, 0)
+		} else if (isImageChallenge) {
+			popup.appendChild(challengeView)
+			this.currentView = 'challenge'
+
+			const grid = document.createElement('div')
+			grid.className = 'challenge-grid'
+
+			const verifyButton = document.createElement('button')
+			verifyButton.className = 'verify-button'
+			verifyButton.disabled = true
+			verifyButton.textContent = this.totalImageChallenges > 1 ? 'NEXT' : 'VERIFY'
+
+			verifyButton.addEventListener('click', () => {
+				const overlay = this.activePopup.querySelector('.progress-overlay')
+				const overlayText = overlay.querySelector('.progress-overlay-text')
+				const overlayFill = overlay.querySelector('.progress-overlay-fill')
+
+				overlay.classList.add('active')
+
+				if (this.currentImageChallengeIndex < this.totalImageChallenges - 1) {
+					overlayText.textContent = `${this.currentImageChallengeIndex + 1} done`
+					const progress =
+						((this.currentImageChallengeIndex + 1) / this.totalImageChallenges) * 100
+					overlayFill.style.width = `${progress}%`
+
+					setTimeout(() => {
+						overlay.classList.remove('active')
+						this.currentImageChallengeIndex++
+						this.updateGrid(
+							grid,
+							challenge,
+							this.currentImageChallengeIndex,
+							verifyButton
+						)
+					}, 1000)
+				} else {
+					overlayText.textContent = `${this.totalImageChallenges} done`
+					overlayFill.style.width = '100%'
+
+					setTimeout(() => {
+						this.handleVerification(container, popup)
+					}, 1000)
+				}
+			})
+
+			challengeView.appendChild(grid)
+			challengeView.appendChild(verifyButton)
+
+			this.updateGrid(grid, challenge, 0, verifyButton)
+		}
 
 		document.body.appendChild(popup)
 		this.positionPopup(popup, container)
@@ -701,7 +770,9 @@ class Librecap {
 
 	handleVerification(container, popup) {
 		try {
-			if (this.currentPowChallenge && this.currentImageChallenge) {
+			this.pauseAudioIfPlaying(popup)
+
+			if (this.currentImagePowChallenge && this.currentImageChallenge) {
 				const selectedImagesData = this.selectedImagesPerChallenge.map((set, index) => ({
 					challenge: index + 1,
 					selectedIndexes: Array.from(set)
@@ -856,6 +927,8 @@ class Librecap {
 
 		this.previousView = this.currentView
 
+		this.pauseAudioIfPlaying(popup)
+
 		if (mainChallengeView) {
 			mainChallengeView.style.display = 'none'
 		}
@@ -871,6 +944,10 @@ class Librecap {
 			const soundChallengeView = this.createSoundChallengeView(popup)
 			soundChallengeView.classList.add('sound-challenge-view')
 			popup.appendChild(soundChallengeView)
+
+			if (this.currentAudioChallenge && this.currentAudioChallenge.audios) {
+				this.updateExistingAudioPopup(this.currentAudioChallenge)
+			}
 		}
 
 		const mainChallengeView = popup.querySelector('.challenge-view:not(.sound-challenge-view)')
@@ -889,6 +966,8 @@ class Librecap {
 		const mainChallengeView = popup.querySelector('.challenge-view:not(.sound-challenge-view)')
 		const infoContent = popup.querySelector('.info-content')
 		const soundChallengeView = popup.querySelector('.sound-challenge-view')
+
+		this.pauseAudioIfPlaying(popup)
 
 		infoContent.style.display = 'none'
 		if (soundChallengeView) {
@@ -940,7 +1019,19 @@ class Librecap {
 			{
 				icon: icons.image,
 				title: 'Image challenge',
-				action: () => this.showChallengeView(popup)
+				action: () => {
+					if (this.currentImageChallenge && this.currentImageChallenge.images) {
+						this.showChallengeView(popup)
+					} else {
+						const button = controls.children[1]
+						button.classList.add('loading', 'force-background')
+
+						this.newImageChallenge(popup.triggerContainer, popup.config).finally(() => {
+							button.classList.remove('loading', 'force-background')
+							this.showChallengeView(popup)
+						})
+					}
+				}
 			},
 			{ icon: icons.info, title: 'Information', action: () => this.showInfoView(popup) }
 		]
@@ -1035,6 +1126,8 @@ class Librecap {
 
 	handleAudioVerification(container, popup) {
 		try {
+			this.pauseAudioIfPlaying(popup)
+
 			if (this.currentAudioPowChallenge && this.currentAudioChallenge) {
 				console.log('Audio verification data:', {
 					powChallenge: this.currentAudioPowChallenge,
@@ -1137,6 +1230,20 @@ class Librecap {
 
 		popup.style.left = `${left}px`
 		popup.style.top = `${top}px`
+	}
+
+	pauseAudioIfPlaying(popup) {
+		const soundChallengeView = popup.querySelector('.sound-challenge-view')
+		if (soundChallengeView && this.currentView === 'sound-challenge') {
+			const audioPlayer = soundChallengeView.querySelector('.audio-player')
+			if (audioPlayer) {
+				try {
+					audioPlayer.pause()
+				} catch (e) {
+					console.error('Error pausing audio:', e)
+				}
+			}
+		}
 	}
 }
 

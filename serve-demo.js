@@ -6,7 +6,8 @@ const fs = require('fs')
 const app = express()
 const PORT = process.env.PORT || 3000
 
-const exampleBuffer = fs.readFileSync(path.join(__dirname, 'exampleBuffer.bin'))
+const imageExampleBuffer = fs.readFileSync(path.join(__dirname, 'demo/image.bin'))
+const audioExampleBuffer = fs.readFileSync(path.join(__dirname, 'demo/audio.bin'))
 
 function fillRandomBytes(buffer, start, length) {
 	for (let i = 0; i < length; i++) {
@@ -27,7 +28,6 @@ app.get('/dist/librecap-min.js', (req, res) => {
 })
 
 app.get('/librecap/v1/initial', (req, res) => {
-	// Demo route sending fake challenges
 	const buffer = Buffer.alloc(114)
 
 	fillRandomBytes(buffer, 0, 16)
@@ -48,7 +48,7 @@ app.get('/librecap/v1/initial', (req, res) => {
 	res.send(buffer)
 })
 
-app.post('/librecap/v1/challenge', (req, res) => {
+function generateDemoChallenge(exampleBuffer) {
 	const buffer = Buffer.alloc(88 + exampleBuffer.length)
 
 	fillRandomBytes(buffer, 0, 16)
@@ -57,6 +57,19 @@ app.post('/librecap/v1/challenge', (req, res) => {
 
 	fillRandomBytes(buffer, 24, 64)
 	exampleBuffer.copy(buffer, 88)
+
+	return buffer
+}
+
+app.post('/librecap/v1/challenge', (req, res) => {
+	const buffer = generateDemoChallenge(imageExampleBuffer)
+
+	res.set('Content-Type', 'application/octet-stream')
+	res.send(buffer)
+})
+
+app.post('/librecap/v1/audio_challenge', (req, res) => {
+	const buffer = generateDemoChallenge(audioExampleBuffer)
 
 	res.set('Content-Type', 'application/octet-stream')
 	res.send(buffer)

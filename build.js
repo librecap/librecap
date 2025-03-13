@@ -214,8 +214,31 @@ function injectCSS(...cssStrings) {
 	fs.writeFileSync(path.resolve(distDir, 'librecap.js'), unminifiedWithHeader)
 
 	const minified = UglifyJS.minify(combinedCode, {
+		compress: {
+			toplevel: true,
+			unsafe: true,
+			unsafe_math: true,
+			unsafe_proto: true,
+			unsafe_regexp: true,
+			unsafe_Function: true,
+			drop_console: true,
+			pure_getters: true,
+			passes: 3,
+			global_defs: {
+				DEBUG: false
+			}
+		},
+		mangle: {
+			toplevel: true,
+			eval: true,
+			keep_fnames: false,
+			properties: {
+				regex: /^_/
+			}
+		},
 		output: {
-			comments: /^!/
+			comments: /^!/,
+			beautify: false
 		}
 	})
 

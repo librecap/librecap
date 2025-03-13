@@ -30,8 +30,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.20/dist/librecap-min.js"
-	integrity="sha512-ZYekj7HNc4uBHTXdX/ARbBCJeJgj991R1VuWkStue0TTeqPNInqL6pJRW0L93UZLR6imJHFZ/uBA2MhfmE3SeA=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.3.0/dist/librecap-min.js"
+	integrity="sha512-pqO+2Ak+quI0tTIZ7x3lFutY4tpYX2pgS05lT0eVFey0EIyloFOpLyoeF8LP33FkA8LFkB0Zw6OXUO6tnZ6hkw=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -51,8 +51,13 @@ That's it! The default configuration works out of the box using your own server 
 
 <br>
 
-![LibreCap Popup Light Theme](https://github.com/librecap/librecap/releases/download/v0.2.11-img/popup-light.png)
-![LibreCap Popup Dark Theme](https://github.com/librecap/librecap/releases/download/v0.2.11-img/popup-dark.png)
+![LibreCap Image Popup Light Theme](https://github.com/librecap/librecap/releases/download/v0.3.0-img/image-popup-light.png)
+![LibreCap Image Popup Dark Theme](https://github.com/librecap/librecap/releases/download/v0.3.0-img/image-popup-dark.png)
+
+<br>
+
+![LibreCap Audio Popup Light Theme](https://github.com/librecap/librecap/releases/download/v0.3.0-img/audio-popup-light.png)
+![LibreCap Audio Popup Dark Theme](https://github.com/librecap/librecap/releases/download/v0.3.0-img/audio-popup-dark.png)
 
 ## 📋 Table of Contents
 
@@ -97,8 +102,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.2.20/dist/librecap-min.js"
-	integrity="sha512-ZYekj7HNc4uBHTXdX/ARbBCJeJgj991R1VuWkStue0TTeqPNInqL6pJRW0L93UZLR6imJHFZ/uBA2MhfmE3SeA=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.3.0/dist/librecap-min.js"
+	integrity="sha512-pqO+2Ak+quI0tTIZ7x3lFutY4tpYX2pgS05lT0eVFey0EIyloFOpLyoeF8LP33FkA8LFkB0Zw6OXUO6tnZ6hkw=="
 	crossorigin="anonymous"
 ></script>
 ```
