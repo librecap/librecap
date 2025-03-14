@@ -30,8 +30,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.3.0/dist/librecap-min.js"
-	integrity="sha512-pqO+2Ak+quI0tTIZ7x3lFutY4tpYX2pgS05lT0eVFey0EIyloFOpLyoeF8LP33FkA8LFkB0Zw6OXUO6tnZ6hkw=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.3.1/dist/librecap-min.js"
+	integrity="sha512-ONhikbcntIb51KP3dkVJtoC01ZyJfRUdVrE0JjrfgzCe02E3hFT8P+YxYAVnR+eqFkrPBnjk5O25nVF7tnMDqg=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -102,8 +102,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.3.0/dist/librecap-min.js"
-	integrity="sha512-pqO+2Ak+quI0tTIZ7x3lFutY4tpYX2pgS05lT0eVFey0EIyloFOpLyoeF8LP33FkA8LFkB0Zw6OXUO6tnZ6hkw=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.3.1/dist/librecap-min.js"
+	integrity="sha512-ONhikbcntIb51KP3dkVJtoC01ZyJfRUdVrE0JjrfgzCe02E3hFT8P+YxYAVnR+eqFkrPBnjk5O25nVF7tnMDqg=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -137,13 +137,13 @@ LibreCap can be customized by adding data attributes to your div:
 Available configuration options:
 
 - `data-theme`: Set to `"light"`, `"dark"`, or `"auto"` (default)
-- `data-language`: NOT IMPLEMENTED YET, Set a specific language code after ISO 639-1 or `"auto"` (default)
+- `data-language`: CURRENTLY ONLY FOR AUDIO CHALLENGE GENERATION; Set a specific language code after ISO 639-1 or `"auto"` (default)
 - `data-sitekey`: Set your LibreCap site key when using a third party gateway server (optional, only when using a third party gateway server)
 - `data-endpoint`: Set the URL of your LibreCap endpoint, this could be an gateway server or your own server address (default: `https://librecap.tn3w.dev/librecap/v1` when an site key is provided, otherwise `/librecap/v1`)
 - `data-brand-title`: Set the title of the brand (default: `"LibreCap"`)
 - `data-brand-url`: Set the URL of the brand (default: `"https://github.com/librecap/librecap"`)
-- `data-brand-logo`: Set the logo of the brand (default: `base64 encoded logo of LibreCap`)
-- `data-brand-description`: Set the description of the brand (default: `"LibreCap is a privacy-friendly CAPTCHA solution that respects your users' data."`)
+- `data-brand-logo`: Set the logo URL of the brand (default: `base64 encoded url representation of LibreCap logo`)
+- `data-brand-description`: Set the description of the brand (default: `"LibreCap is an open-source CAPTCHA alternative designed with privacy and data protection in mind."`)
 - `data-brand-github`: Set the GitHub URL of the brand (default: `"https://github.com/librecap/librecap"`)
 - `data-brand-terms`: Set the terms URL of the brand (default: `"https://github.com/librecap/librecap/blob/main/TERMS.md"`)
 - `data-brand-privacy`: Set the privacy URL of the brand (default: `"https://github.com/librecap/librecap/blob/main/PRIVACY.md"`)

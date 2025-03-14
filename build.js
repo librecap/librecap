@@ -92,12 +92,11 @@ function extractCssImports(filePath, visitedFiles = new Set()) {
 	return allCssImports
 }
 
-function processImportedJsFiles(indexFilePath) {
+function processImportedJsFiles(indexFilePath, processedFiles = new Set()) {
 	const imports = extractJsImports(indexFilePath).filter(
 		(importFile) => !importFile.endsWith('.css')
 	)
 	const importedCode = []
-	const processedFiles = new Set()
 
 	imports.forEach((importFile) => {
 		const importPath = path.resolve(path.dirname(indexFilePath), importFile + '.js')
@@ -115,16 +114,20 @@ function processImportedJsFiles(indexFilePath) {
 				.replace(/export\s+default\s+/g, '')
 				.replace(/export\s+{[^}]*}/g, '')
 
-			importedCode.push(`// Imported from ${importFile}.js`)
 			importedCode.push(fileContent)
 
 			processedFiles.add(importPath)
+
+			const nestedImports = processImportedJsFiles(importPath, processedFiles)
+			if (nestedImports) {
+				importedCode.push(nestedImports)
+			}
 		} else {
 			console.warn(`Warning: Imported file ${importFile}.js not found.`)
 		}
 	})
 
-	return importedCode.join('\n\n')
+	return importedCode.length > 0 ? importedCode.join('\n\n') : null
 }
 
 async function build() {

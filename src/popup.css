@@ -143,7 +143,8 @@
 	}
 
 	.libre-captcha-popup[data-theme='auto'] .challenge-button:nth-child(1):not(.loading):hover svg {
-		fill: #78e3ff;
+		fill: #a78bfa;
+		transform: rotate(180deg);
 	}
 
 	.libre-captcha-popup[data-theme='auto'] .challenge-button:nth-child(2):hover svg {
@@ -182,6 +183,18 @@
 	to {
 		opacity: 1;
 		transform: translateY(0);
+	}
+}
+
+@keyframes libreCaptchaPulse {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
 	}
 }
 
@@ -253,6 +266,7 @@
 	border-radius: 6px;
 	transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	will-change: transform;
+	overflow: hidden;
 }
 
 @keyframes spin {
@@ -268,17 +282,6 @@
 	pointer-events: none;
 }
 
-.libre-captcha-popup .challenge-button.force-background::before {
-	width: 150%;
-	height: 150%;
-}
-
-.libre-captcha-popup .challenge-button.loading svg {
-	animation: spin 1s linear infinite;
-	transform-origin: center;
-	opacity: 1;
-}
-
 .libre-captcha-popup .challenge-button::before {
 	content: '';
 	position: absolute;
@@ -287,14 +290,16 @@
 	background-color: rgba(0, 0, 0, 0.15);
 	opacity: 0;
 	transition: opacity 0.2s ease;
-}
-
-.libre-captcha-popup .challenge-button:hover {
-	transform: translateY(-2px) scale(1.05);
+	transform: scale(1);
 }
 
 .libre-captcha-popup .challenge-button:hover::before {
 	opacity: 1;
+}
+
+.libre-captcha-popup .challenge-button.loading::before {
+	opacity: 1;
+	transform: scale(1);
 }
 
 .libre-captcha-popup .challenge-button svg {
@@ -307,12 +312,17 @@
 	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.libre-captcha-popup .challenge-button:hover {
+	transform: translateY(-2px) scale(1.05);
+}
+
 .libre-captcha-popup .challenge-button:hover svg {
 	opacity: 1;
 	transform: scale(1.1);
 }
 
 .libre-captcha-popup .challenge-button:nth-child(1):not(.loading):hover svg {
+	fill: #8b5cf6;
 	transform: rotate(180deg);
 }
 
@@ -322,6 +332,20 @@
 
 .libre-captcha-popup .challenge-button:nth-child(3):hover svg {
 	fill: #ff9800;
+}
+
+.libre-captcha-popup .challenge-button.loading svg {
+	animation: spin 1s linear infinite;
+	transform-origin: center;
+	opacity: 1;
+}
+
+.libre-captcha-popup .challenge-button:nth-child(1).loading svg {
+	fill: #8b5cf6;
+}
+
+.libre-captcha-popup .challenge-button:nth-child(2).loading svg {
+	fill: #00b8d4;
 }
 
 .libre-captcha-popup .challenge-grid {
@@ -563,6 +587,7 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 8px;
+	transition: transform 0.3s ease;
 }
 
 .libre-captcha-popup .info-brand-title {
@@ -570,6 +595,7 @@
 	font-weight: 700;
 	color: var(--libre-captcha-text);
 	letter-spacing: -0.01em;
+	transition: transform 0.3s ease;
 }
 
 .libre-captcha-popup .info-text {
@@ -698,6 +724,14 @@
 
 .libre-captcha-popup .brand-wrapper:not(a) {
 	opacity: 1;
+}
+
+.libre-captcha-popup .brand-wrapper:hover .info-logo {
+	transform: rotate(5deg) scale(1.03);
+}
+
+.libre-captcha-popup .brand-wrapper:hover .info-brand-title {
+	transform: translateX(4px);
 }
 
 .libre-captcha-popup .challenge-progress {
@@ -850,7 +884,8 @@
 }
 
 .libre-captcha-popup[data-theme='dark'] .challenge-button:nth-child(1):not(.loading):hover svg {
-	fill: #78e3ff;
+	fill: #a78bfa;
+	transform: rotate(180deg);
 }
 
 .libre-captcha-popup[data-theme='dark'] .challenge-button:nth-child(2):hover svg {
@@ -893,5 +928,22 @@
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 		background-color: var(--libre-captcha-selected);
 		color: #ffffff;
+	}
+}
+
+.libre-captcha-popup .challenge-button:nth-child(2):hover svg {
+	fill: #00b8d4;
+	animation: libreCaptchaPulse 1s ease-in-out infinite;
+}
+
+.libre-captcha-popup[data-theme='dark'] .challenge-button:nth-child(2):hover svg {
+	fill: #56ccff;
+	animation: libreCaptchaPulse 1s ease-in-out infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+	.libre-captcha-popup[data-theme='auto'] .challenge-button:nth-child(2):hover svg {
+		fill: #56ccff;
+		animation: libreCaptchaPulse 1s ease-in-out infinite;
 	}
 }
