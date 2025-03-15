@@ -1,6 +1,6 @@
 {
 	"name": "librecap",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "An open-source CAPTCHA Box alternative designed with privacy and data protection in mind.",
 	"main": "dist/librecap.js",
 	"jsdelivr": "dist/librecap.js",
@@ -17,8 +17,19 @@
 		"lint:js": "eslint . --ext .js,.jsx,.ts,.tsx",
 		"lint:css": "stylelint --config .stylelintrc.mjs \"**/*.css\""
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": [
+		"captcha",
+		"privacy",
+		"security",
+		"authentication",
+		"verification",
+		"bot-protection",
+		"open-source",
+		"accessibility",
+		"human-verification",
+		"web-security"
+	],
+	"author": "librecap",
 	"license": "Apache-2.0",
 	"devDependencies": {
 		"cssnano": "^7.0.6",
