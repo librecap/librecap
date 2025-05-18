@@ -6,8 +6,8 @@
 	--libre-captcha-selected: #0074bf;
 	--libre-captcha-selected-dark: #2b87d3;
 	--libre-captcha-font:
-		'Ubuntu', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans,
-		'Helvetica Neue', Arial, sans-serif;
+		system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, 'Noto Sans',
+		'Open Sans', 'Helvetica Neue', Ubuntu, Arial, sans-serif;
 
 	display: none;
 	position: absolute;

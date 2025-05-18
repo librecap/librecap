@@ -1,4 +1,3 @@
-import './fonts.css'
 import './popup.css'
 import './widget.css'
 import { UI } from './ui'

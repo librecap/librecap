@@ -22,16 +22,17 @@
 	padding: 0 16px;
 	box-sizing: border-box;
 	font-family:
-		Ubuntu,
+		system-ui,
 		-apple-system,
 		BlinkMacSystemFont,
 		'Segoe UI',
+		'Inter',
 		Roboto,
-		Oxygen,
-		Ubuntu,
-		Cantarell,
+		'Noto Sans',
 		'Open Sans',
 		'Helvetica Neue',
+		Ubuntu,
+		Arial,
 		sans-serif;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 	transition: all 0.3s ease;
@@ -231,7 +232,14 @@
 }
 
 .libre-captcha-widget .captcha-title {
-	font-family: Arial, sans-serif;
+	font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		'Inter',
+		Roboto,
+		sans-serif;
 	font-size: 10px;
 	color: var(--libre-captcha-brand-color);
 	font-weight: bold;

@@ -30,8 +30,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.3.3/dist/librecap-min.js"
-	integrity="sha512-n4+vqAtXwD3NMFNHcF0aPt76W/+vANmhACmI7aGhnJaFD62gkd97zi6qml8PvK8UPCAbRbhEuQoxbl18GM2J+A=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.3.4/dist/librecap-min.js"
+	integrity="sha512-YLwWPOrjNAaO2ErQv/QTLrSlZ9Gi3U2tGB187smfsCSqMo7XUHXavz2gtn7Ln3Cwdnd4jwbLPmYlZcvmqFsoxA=="
 	crossorigin="anonymous"
 ></script>
 ```
@@ -102,8 +102,8 @@ Add the script tag to your HTML file:
 
 ```html
 <script
-	src="https://cdn.jsdelivr.net/npm/librecap@0.3.3/dist/librecap-min.js"
-	integrity="sha512-n4+vqAtXwD3NMFNHcF0aPt76W/+vANmhACmI7aGhnJaFD62gkd97zi6qml8PvK8UPCAbRbhEuQoxbl18GM2J+A=="
+	src="https://cdn.jsdelivr.net/npm/librecap@0.3.4/dist/librecap-min.js"
+	integrity="sha512-YLwWPOrjNAaO2ErQv/QTLrSlZ9Gi3U2tGB187smfsCSqMo7XUHXavz2gtn7Ln3Cwdnd4jwbLPmYlZcvmqFsoxA=="
 	crossorigin="anonymous"
 ></script>
 ```
